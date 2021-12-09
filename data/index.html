@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>esp32cam</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>esp32cam</h1>
+  <h3>Version %s</h3>
+  <table cellspacing="4" align="center" cellpadding="5">
+  <class="circle-container">
+  </table>
+  <form action="/get" method="get">
+  <table cellspacing="4" align="center" cellpadding="5">
+    <colgroup>
+      <col width="250">
+      <col height="65">
+    </colgroup>
+    <tr>
+      <td>Wifi SSID</td>
+      <td><INPUT type='text' name='wifi_ssid' maxlength='45' value='%s' size="20" ></td>
+      <td>Wifi PASS</td>
+      <td><INPUT type='password' name='wifi_password' value='%s' size="20" ></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><INPUT type='text' name='wifi_ssid' maxlength='45' value='%s' size="20" ></td>
+      <td></td>
+      <td><INPUT type='password' name='wifi_password' value='%s' size="20" ></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><INPUT type='text' name='wifi_ssid' maxlength='45' value='%s' size="20" ></td>
+      <td></td>
+      <td><INPUT type='password' name='wifi_password' value='%s' size="20" ></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><INPUT type='text' name='wifi_ssid' maxlength='45' value='%s' size="20" ></td>
+      <td></td>
+      <td><INPUT type='password' name='wifi_password' value='%s' size="20" ></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><INPUT type='text' name='wifi_ssid' maxlength='45' value='%s' size="20" ></td>
+      <td></td>
+      <td><INPUT type='password' name='wifi_password' value='%s' size="20" ></td>
+    </tr>
+    <tr>
+      <td>serverName</td>
+      <td><input id=serverName type="text" name="serverName" value="%s" size="20"></td>
+      <td>serverPort</td>
+      <td><input id=serverPort type="number" name="serverPort" step="1" value="%d" size="8"></td>
+    </tr>
+      <tr>
+        <td>serverPath</td>
+        <td><input id=serverPath type="text" name="serverPath" value="%s" size="20"></td>
+        <td>ntpServer</td>
+        <td><input id=ntpServer type="text" name="ntpServer" value="%s" size="20"></td>
+      </tr>
+    <tr>
+      <td>gmtOffset_sec</td>
+      <td><input id=gmtOffset_sec type="number" name="gmtOffset_sec" step="1" value="%d" size="8"></td>
+      <td>daylightOffset_sec</td>
+      <td><input id=daylightOffset_sec type="number" name="daylightOffset_sec" step="1" value="%d" size="8"></td>
+    </tr>
+    <tr>
+      <td>caption</td>
+      <td><input id=caption type="text" name="caption" value="%s" size="20"></td>
+      <td>timerInterval</td>
+      <td><input id=timerInterval type="number" name="timerInterval" step="1" value="%d" size="8"></td>
+    </tr>
+    <tr>
+      <td>start_upload</td>
+      <td><input id=start_upload type="number" name="start_upload" step="1" value="%04d" size="8"></td>
+      <td>end_upload</td>
+      <td><input id=end_upload type="number" name="end_upload" step="1" value="%04d" size="8"></td>
+    </tr>
+<td><p><button class="button_save">Save</button></a></p></td>
+<td><a href="reset_all" class="button_reset" >Reset</a></td>
+<td><a href="reboot" class="button_reboot" >Reboot</a></td>
+<td><a href="upload" class="upload" >Upload Files</a></td>
+<td><a href="update" class="update" >Update Firmware</a></td>
+</form>
+</table>
+</body>
+</html>

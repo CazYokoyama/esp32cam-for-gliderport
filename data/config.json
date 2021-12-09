@@ -1,0 +1,30 @@
+{
+   "wifi":{
+      "ssid":[
+         "xxxxxxx",
+         "xxxxxxx",
+         "xxxxxxx",
+         "xxxxxxx",
+         "xxxxxxx"
+      ],
+      "pass":[
+         "xxxxxxx",
+         "xxxxxxx",
+         "xxxxxxx",
+         "xxxxxxx",
+         "xxxxxxx"
+      ]
+   },
+   "upload":{
+      "serverName":"www.caztech.com",
+      "serverPath":"/glider/wvsc/webcam/mobilewebcam-serverside/NorthPlains/cam.php",
+      "serverPort":80,
+      "ntpServer":"pool.ntp.org",
+      "gmtOffset_sec":-28800,
+      "daylightOffset_sec":3600,
+      "caption":"North Plains Glider port",
+      "timerInterval":300,
+      "start_upload":"0600",
+      "end_upload":"2100"
+   }
+}

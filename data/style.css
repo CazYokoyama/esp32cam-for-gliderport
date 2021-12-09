@@ -1,0 +1,86 @@
+html {
+  font-family: Helvetica;
+  display: inline-block;
+  margin: 0px auto;
+  text-align: center;
+}
+h1{
+  color: #0F3376;
+  padding: 1vh;
+}
+h2{
+  color: #0F3376;
+  padding: 1vh;
+}
+.button_save {
+  display: inline-block;
+  background-color:blue;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 15px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.update {
+  display: inline-block;
+  background-color:green;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 15px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.upload {
+  display: inline-block;
+  background-color:green;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 15px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.button_reset {
+  display: inline-block;
+  background-color:orange;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 15px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+.button_reboot {
+  display: inline-block;
+  background-color:red;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 6px 12px;
+  text-decoration: none;
+  font-size: 15px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+table {
+  background-color:white;
+}
+
+input[type='number']{
+    width: 60px;
+}
