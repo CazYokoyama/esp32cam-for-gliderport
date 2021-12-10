@@ -103,6 +103,7 @@ void loop() {
       ESP.restart();
     Serial.println("Going to deep sleep");
     Serial.flush();
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_12, 0);
     esp_deep_sleep_start();
   }
 }
