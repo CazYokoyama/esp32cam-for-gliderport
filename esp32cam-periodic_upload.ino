@@ -51,6 +51,7 @@ WiFiMulti *wifiMulti;
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
 
 struct tm timeinfo;
+static bool webui;
 
 const int HS2_DATA2_Pin = 12;
 
@@ -77,12 +78,14 @@ void setup() {
   getLocalTime(&timeinfo);
 
   if (digitalRead(HS2_DATA2_Pin) == LOW) {
+    webui = true;
     Serial.print("Web server ");
     Serial.print(my_IP);
     Serial.println(" is up");
     Serial.flush();
     Web_setup();
   } else {
+    webui = false;
     if (start_upload <= timeinfo.tm_hour * 100 + timeinfo.tm_min  &&
       timeinfo.tm_hour * 100 + timeinfo.tm_min < end_upload)
       sendPhoto();
@@ -91,9 +94,13 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(HS2_DATA2_Pin) == LOW)
+  if (digitalRead(HS2_DATA2_Pin) == LOW) {
+    if (!webui)
+      ESP.restart();
     Web_loop();
-  else {
+  } else {
+    if (webui)
+      ESP.restart();
     Serial.println("Going to deep sleep");
     Serial.flush();
     esp_deep_sleep_start();
