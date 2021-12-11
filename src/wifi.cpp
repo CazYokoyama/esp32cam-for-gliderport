@@ -51,6 +51,8 @@ wifi_setup()
   wifiMulti = new WiFiMulti();
   for (int i = 0; i < N_APs; i++) {
     if (strcmp(wifi_ssid[i].c_str(), "xxxxxxx") != 0) {
+      Serial.printf("%s() wifi[%d]: %s/%s\n", __func__,
+                    i, wifi_ssid[i].c_str(), wifi_pass[i].c_str());
       wifiMulti->addAP(wifi_ssid[i].c_str(), wifi_pass[i].c_str());
     }
   }

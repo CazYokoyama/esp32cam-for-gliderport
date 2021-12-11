@@ -111,6 +111,8 @@ bool read_config(void)
             String ssid = obj["wifi"]["ssid"][i].as<String>();
             String pass = obj["wifi"]["pass"][i].as<String>();
             if (ssid != String("xxxxxxx")) {
+                Serial.printf("%s() wifi[%d]: %s/%s\n", __func__, i,
+                              ssid.c_str(), pass.c_str());
                 if (pass != String("hidepass")) {
                     wifi_ssid[i] = ssid;
                     wifi_pass[i] = pass;
@@ -180,6 +182,9 @@ bool save_config(void)
     }
 
     for (int i = 0; i < N_APs; i++) {
+        if (strcmp(wifi_ssid[i].c_str(), "xxxxxxx") != 0)
+            Serial.printf("%s() wifi[%d]: %s/%s\n", __func__, i,
+                          wifi_ssid[i].c_str(), wifi_pass[i].c_str());
         obj["wifi"]["ssid"][i] = wifi_ssid[i];
         obj["wifi"]["pass"][i] = wifi_pass[i];
     }
