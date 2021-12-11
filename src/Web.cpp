@@ -225,9 +225,11 @@ void Web_setup()
 	int params = request->params();
 	for(int i = 0; i < params; i++) {
 	  AsyncWebParameter *p = request->getParam(i);
-	  if (p->name() == String("wifi_ssid"))
+	  if (p->name() == String("wifi_ssid") &&
+	      p->value() != String("xxxxxxx"))
 	    wifi_ssid[n_ssid++] = p->value();
-	  if (p->name() == String("wifi_password"))
+	  if (p->name() == String("wifi_password") &&
+	      p->value() != String("hidepass"))
 	    wifi_pass[n_pass++] = p->value();
 	  if (p->name() == String("serverName"))
 	    serverName = p->value();

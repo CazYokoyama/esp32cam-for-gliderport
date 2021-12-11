@@ -49,8 +49,11 @@ void
 wifi_setup()
 {
   wifiMulti = new WiFiMulti();
-  for (int i = 0; i < N_APs; i++)
-    wifiMulti->addAP(wifi_ssid[i].c_str(), wifi_pass[i].c_str());
+  for (int i = 0; i < N_APs; i++) {
+    if (strcmp(wifi_ssid[i].c_str(), "xxxxxxx") != 0) {
+      wifiMulti->addAP(wifi_ssid[i].c_str(), wifi_pass[i].c_str());
+    }
+  }
   for (int n = 0; n < 20; n++) { /* retry */
     if (wifiMulti->run() == WL_CONNECTED) {
       Serial.print("Connect "); Serial.print(WiFi.SSID());

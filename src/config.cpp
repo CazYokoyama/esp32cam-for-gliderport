@@ -107,12 +107,16 @@ bool read_config(void)
     }
     else
     {
-        //Serial.println(F("found wifi config!"));
-        if (1)
-            for (int i=0; i < N_APs; i++) {
-                wifi_ssid[i]  = obj["wifi"]["ssid"][i].as<String>();
-                wifi_pass[i] = obj["wifi"]["pass"][i].as<String>();
+        for (int i = 0; i < N_APs; i++) {
+            String ssid = obj["wifi"]["ssid"][i].as<String>();
+            String pass = obj["wifi"]["pass"][i].as<String>();
+            if (ssid != String("xxxxxxx")) {
+                if (pass != String("hidepass")) {
+                    wifi_ssid[i] = ssid;
+                    wifi_pass[i] = pass;
+                }
             }
+        }
     }
 
     if (!obj.containsKey(F("upload"))) {
