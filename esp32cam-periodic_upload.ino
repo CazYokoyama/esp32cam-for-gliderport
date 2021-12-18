@@ -17,7 +17,6 @@
 */
 
 #include <Arduino.h>
-#include <WiFiMulti.h>
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
 #include "esp_camera.h"
@@ -25,9 +24,6 @@
 #include "src/Web.h"
 #include "src/config.h"
 #include "src/wifi.hpp"
-
-WiFiClient client;
-WiFiMulti *wifiMulti;
 
 // CAMERA_MODEL_AI_THINKER
 #define PWDN_GPIO_NUM     32
@@ -89,7 +85,7 @@ void setup() {
     if (start_upload <= timeinfo.tm_hour * 100 + timeinfo.tm_min  &&
       timeinfo.tm_hour * 100 + timeinfo.tm_min < end_upload)
       sendPhoto();
-    delete wifiMulti;
+      wifi_close();
   }
 }
 

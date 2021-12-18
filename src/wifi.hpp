@@ -22,6 +22,8 @@
 #include <WiFiMulti.h>
 #include <esp_wifi.h>
 
+extern WiFiClient client;
+
 enum
 {
     WIFI_TX_POWER_MIN = 0,  /* 0  dBm */
@@ -54,5 +56,6 @@ static const int8_t ESP32_dB_to_power_level[21] = {
 };
 
 void wifi_setup();
+void wifi_close();
 
 #endif /* WIFI_HPP */

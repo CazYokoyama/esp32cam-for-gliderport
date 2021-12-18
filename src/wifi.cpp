@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <WiFiMulti.h>
 #include "wifi.hpp"
 #include "config.h"
 
-extern WiFiClient client;
-extern WiFiMulti *wifiMulti;
+WiFiClient client;
+WiFiMulti *wifiMulti;
 
 /**
  * Default WiFi connection information.
@@ -84,4 +85,11 @@ wifi_setup()
   Serial.println(WiFi.softAPIP());
   Serial.flush();
   my_IP = WiFi.softAPIP();
+}
+
+void
+wifi_close()
+{
+    esp_wifi_stop();
+    delete wifiMulti;
 }
