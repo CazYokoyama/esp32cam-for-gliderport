@@ -62,6 +62,7 @@ void setup() {
     webui = false;
     if (start_upload <= timeinfo.tm_hour * 100 + timeinfo.tm_min  &&
       timeinfo.tm_hour * 100 + timeinfo.tm_min < end_upload)
+      camera_init();
       sendPhoto();
       wifi_close();
   }

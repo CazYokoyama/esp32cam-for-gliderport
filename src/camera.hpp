@@ -19,6 +19,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+void camera_init();
 String sendPhoto();
 
 #endif /* CAMERA_HPP */

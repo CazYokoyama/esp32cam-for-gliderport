@@ -43,11 +43,11 @@
 
 extern struct tm timeinfo;
 
-String sendPhoto() {
-  String getAll;
-  String getBody;
-
+void
+camera_init()
+{
   camera_config_t config;
+
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
   config.pin_d0 = Y2_GPIO_NUM;
@@ -89,6 +89,11 @@ String sendPhoto() {
   }
 
   delay(2000);
+}
+
+String sendPhoto() {
+  String getAll;
+  String getBody;
 
   camera_fb_t * fb = NULL;
   fb = esp_camera_fb_get();
