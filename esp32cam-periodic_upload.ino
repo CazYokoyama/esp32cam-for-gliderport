@@ -45,8 +45,8 @@ void setup() {
   wifi_setup();
 
   //init and get the time
-  configTime(gmtOffset_sec,
-             daylightOffset_sec,
+  configTime(gmtOffset_hour * 3600,
+             daylightOffset_hour * 3600,
              ntpServer.c_str());
   memset(&timeinfo, 0, sizeof(timeinfo));
   getLocalTime(&timeinfo);

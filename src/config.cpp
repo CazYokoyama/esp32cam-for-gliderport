@@ -45,8 +45,8 @@ String serverName = "www.caztech.com";
 String serverPath = "/glider/wvsc/webcam/mobilewebcam-serverside/NorthPlains/cam.php";
 int  serverPort = 80;
 String ntpServer = "pool.ntp.org";
-long gmtOffset_sec = -28800;    /* PDT: -8 * 3600 */
-int  daylightOffset_sec = 3600; /* 1 hour */
+long gmtOffset_hour = -8;    /* PDT: -8 */
+int  daylightOffset_hour = 1; /* 1 hour */
 String caption = "North Plains Glider port";
 int  timerInterval = 60;       /* 1min * 60 = 60 sec */
 int  start_upload = 0500; /* start hour of taking image */
@@ -129,8 +129,8 @@ bool read_config(void)
     serverPath         = obj["upload"]["serverPath"].as<String>();
     serverPort         = obj["upload"]["serverPort"];
     ntpServer          = obj["upload"]["ntpServer"].as<String>();
-    gmtOffset_sec      = obj["upload"]["gmtOffset_sec"];
-    daylightOffset_sec = obj["upload"]["daylightOffset_sec"];
+    gmtOffset_hour      = obj["upload"]["gmtOffset_hour"];
+    daylightOffset_hour = obj["upload"]["daylightOffset_hour"];
     caption            = obj["upload"]["caption"].as<String>();
     timerInterval      = obj["upload"]["timerInterval"];
     start_upload       = obj["upload"]["start_upload"];
@@ -192,8 +192,8 @@ bool save_config(void)
     obj["upload"]["serverPath"]         = serverPath;
     obj["upload"]["serverPort"]         = serverPort;
     obj["upload"]["ntpServer"]          = ntpServer;
-    obj["upload"]["gmtOffset_sec"]      = gmtOffset_sec;
-    obj["upload"]["daylightOffset_sec"] = daylightOffset_sec;
+    obj["upload"]["gmtOffset_hour"]      = gmtOffset_hour;
+    obj["upload"]["daylightOffset_hour"] = daylightOffset_hour;
     obj["upload"]["caption"]            = caption;
     obj["upload"]["timerInterval"]      = timerInterval;
     obj["upload"]["start_upload"]       = start_upload;

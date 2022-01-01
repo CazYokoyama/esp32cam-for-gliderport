@@ -170,7 +170,7 @@ void Web_setup()
              wifi_ssid[4].c_str(), "hidepass",
              serverName.c_str(), serverPort,
              serverPath.c_str(), ntpServer.c_str(),
-             gmtOffset_sec, daylightOffset_sec,
+             gmtOffset_hour, daylightOffset_hour,
              caption.c_str(), timerInterval,
              start_upload, end_upload
              );
@@ -239,10 +239,10 @@ void Web_setup()
 	    serverPath = p->value();
 	  if (p->name() == String("ntpServer"))
 	    ntpServer = p->value();
-	  if (p->name() == String("gmtOffset_sec"))
-	    gmtOffset_sec = p->value().toInt();
-	  if (p->name() == String("daylightOffset_sec"))
-	    daylightOffset_sec = p->value().toInt();
+	  if (p->name() == String("gmtOffset_hour"))
+	    gmtOffset_hour = p->value().toInt();
+	  if (p->name() == String("daylightOffset_hour"))
+	    daylightOffset_hour = p->value().toInt();
 	  if (p->name() == String("caption"))
 	    caption = p->value();
 	  if (p->name() == String("timerInterval"))
