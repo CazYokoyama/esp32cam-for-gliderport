@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../git-version.h"
 #include "ESPAsyncWebServer.h"
 #include "SPIFFS.h"
 #include "config.h"
@@ -24,7 +25,7 @@
 
 #define  U_PART U_FLASH
 
-static const char version[] PROGMEM = "0.01";
+const String version = "0.01-" + String(GIT_VERSION);
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer wserver(80);
@@ -162,7 +163,7 @@ void Web_setup()
     offset = Settings_temp;
 
     snprintf(offset, size, index_html,
-	     version,
+             version.c_str(),
              wifi_ssid[0].c_str(), "hidepass",
              wifi_ssid[1].c_str(), "hidepass",
              wifi_ssid[2].c_str(), "hidepass",
