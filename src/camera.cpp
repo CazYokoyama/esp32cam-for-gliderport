@@ -188,11 +188,11 @@ String sendPhoto() {
 
     esp_camera_fb_return(fb);
 
-    int timoutTimer = 10000;
+    int timeoutTimer = 10000;
     long startTimer = millis();
     boolean state = false;
 
-    while ((startTimer + timoutTimer) > millis()) {
+    while ((startTimer + timeoutTimer) > millis()) {
       Serial.print(".");
       delay(100);
       while (client.available()) {
