@@ -19,7 +19,9 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include "ESPAsyncWebServer.h"
+
 void camera_init();
-String sendPhoto();
+void handleFrame(AsyncWebServerRequest *request);
 
 #endif /* CAMERA_HPP */

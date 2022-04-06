@@ -22,13 +22,14 @@
 #include "SPIFFS.h"
 #include "config.h"
 #include <Update.h>
+#include "camera.hpp"
 
 #define  U_PART U_FLASH
 
 const String version = "0.01-" + String(GIT_VERSION);
 
 // Create AsyncWebServer object on port 80
-AsyncWebServer wserver(80);
+AsyncWebServer wserver(61000);
 
 static const char upload_html[] PROGMEM = "<html>\
                                             <head>\
@@ -59,7 +60,7 @@ void handleUpload(AsyncWebServerRequest* request, String filename, size_t index,
     if (final)
     {
         request->_tempFile.close();
-        request->redirect("/");
+        request->redirect("/config");
         if (filename == "config.json") {
             delay(200);
             ESP.restart();
@@ -130,7 +131,7 @@ void Web_setup()
 
     if (!SPIFFS.exists("/index.html"))
     {
-        wserver.on("/", HTTP_GET, [upload_html](AsyncWebServerRequest* request){
+        wserver.on("/config", HTTP_GET, [upload_html](AsyncWebServerRequest* request) {
             request->send(200, "text/html", upload_html);
         });
 
@@ -179,7 +180,7 @@ void Web_setup()
     size_t len  = strlen(offset);
     String html = String(offset);
 
-    wserver.on("/", HTTP_GET, [html](AsyncWebServerRequest* request){
+    wserver.on("/config", HTTP_GET, [html](AsyncWebServerRequest* request){
         request->send(200, "text/html", html);
     });
 
@@ -189,9 +190,13 @@ void Web_setup()
         request->send(SPIFFS, "/style.css", "text/css");
     });
 
-    wserver.on("/update", HTTP_GET, [](AsyncWebServerRequest* request){
+    wserver.on("/update", HTTP_GET, [](AsyncWebServerRequest *request){
         handleUpdate(request);
-        request->redirect("/");
+        request->redirect("/config");
+    });
+
+    wserver.on("/", HTTP_GET, [](AsyncWebServerRequest* request){
+        handleFrame(request);
     });
 
     wserver.on("/doUpdate", HTTP_POST,
@@ -206,14 +211,14 @@ void Web_setup()
     });
 
     wserver.on("/reset_all", HTTP_GET, [](AsyncWebServerRequest* request){
-        request->redirect("/");
+        request->redirect("/config");
         SPIFFS.format();
         delay(200);
         ESP.restart();
     });
 
     wserver.on("/reboot", HTTP_GET, [](AsyncWebServerRequest* request){
-        request->redirect("/");
+        request->redirect("/config");
         ESP.restart();
     });
 
@@ -254,7 +259,7 @@ void Web_setup()
 	    end_upload = p->value().toInt();
 	}
 
-        request->redirect("/");
+        request->redirect("/config");
 
         save_config();
         delay(200);

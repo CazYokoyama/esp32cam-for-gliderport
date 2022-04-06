@@ -27,14 +27,9 @@
 struct tm timeinfo;
 static bool webui;
 
-const int HS2_DATA2_Pin = 12;
-
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); 
   Serial.begin(115200);
-
-  // initialize the pushbutton pin as an input:
-  pinMode(HS2_DATA2_Pin, INPUT_PULLUP);
 
   Serial.println("Wake up from deep sleep");
 
@@ -51,34 +46,28 @@ void setup() {
   memset(&timeinfo, 0, sizeof(timeinfo));
   getLocalTime(&timeinfo);
 
-  if (digitalRead(HS2_DATA2_Pin) == LOW) {
-    webui = true;
+  camera_init();
+
+#if 0
+  if (start_upload <= timeinfo.tm_hour * 100 + timeinfo.tm_min  &&
+    timeinfo.tm_hour * 100 + timeinfo.tm_min < end_upload) {
+    wifi_close();
+    Serial.println("Going to deep sleep");
+    Serial.flush();
+    esp_deep_sleep_start();
+  } else {
+#endif
     Serial.print("Web server ");
     Serial.print(my_IP);
     Serial.println(" is up");
     Serial.flush();
     Web_setup();
-  } else {
-    webui = false;
-    if (start_upload <= timeinfo.tm_hour * 100 + timeinfo.tm_min  &&
-      timeinfo.tm_hour * 100 + timeinfo.tm_min < end_upload)
-      camera_init();
-      sendPhoto();
-      wifi_close();
+#if 0
   }
+#endif
 }
 
 void loop() {
-  if (digitalRead(HS2_DATA2_Pin) == LOW) {
-    if (!webui)
-      ESP.restart();
+    /* never come here on deep sleep */
     Web_loop();
-  } else {
-    if (webui)
-      ESP.restart();
-    Serial.println("Going to deep sleep");
-    Serial.flush();
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_12, 0);
-    esp_deep_sleep_start();
-  }
 }

@@ -21,6 +21,7 @@
 #include "time.h"
 #include "config.h"
 #include "wifi.hpp"
+#include "camera.hpp"
 
 // CAMERA_MODEL_AI_THINKER
 #define PWDN_GPIO_NUM     32
@@ -115,106 +116,54 @@ camera_init()
   delay(2000);
 }
 
-String sendPhoto() {
-  String getAll;
-  String getBody;
+#include "FS.h"                // SD Card ESP32
+#include "SD_MMC.h"            // SD Card ESP32
+#define FILE_PHOTO "/current.jpg"
 
-  camera_fb_t * fb = NULL;
-  fb = esp_camera_fb_get();
-  if (!fb) {
-    Serial.println("Camera capture failed");
-    delay(1000);
-    ESP.restart();
-  }
-
-  Serial.println("Connecting to server: " + serverName);
-
-  if (client.connect(serverName.c_str(), serverPort)) {
-    Serial.println("Connection successful!");
-
-    /* create time stamp string */
-    char date_time[40];
-    snprintf(date_time, sizeof(date_time), "%d-%02d-%02d %02d:%02d:%02d",
-      (timeinfo.tm_year)+1900,(timeinfo.tm_mon)+1, timeinfo.tm_mday,
-      timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-
-    String caption_head = "--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07\r\nContent-Disposition: form-data; name=\"caption\"\r\n\r\n";
-    String caption_data = caption;
-    String caption_tail = "\r\n--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07";
-
-    String timestamp_head = "--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07\r\nContent-Disposition: form-data; name=\"timestamp\"\r\n\r\n";
-    String timestamp_data = String(date_time);
-    String timestamp_tail = "\r\n--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07";
-
-    String head = "--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07\r\nContent-Disposition: form-data; name=\"userfile\"; filename=\"esp32-cam.jpg\"\r\n\r\n";
-    String tail = "\r\n--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07--\r\n\r\n";
-
-    uint32_t imageLen = fb->len;
-    uint32_t extraLen = caption_head.length() + caption_data.length() + caption_tail.length() +
-	timestamp_head.length() + timestamp_data.length() + timestamp_tail.length() +
-	head.length() + tail.length();
-    uint32_t totalLen = imageLen + extraLen;
-
-    client.println("POST " + serverPath + " HTTP/1.1");
-    client.println("Host: " + serverName);
-    client.println("Content-Length: " + String(totalLen));
-    client.println("Content-Type: multipart/form-data; boundary=ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07");
-
-    client.println();
-    client.print(caption_head);
-    client.print(caption_data);
-    client.print(caption_tail);
-
-    client.println();
-    client.print(timestamp_head);
-    client.print(timestamp_data);
-    client.print(timestamp_tail);
-
-    client.println();
-    client.print(head);
-
-    uint8_t *fbBuf = fb->buf;
-    size_t fbLen = fb->len;
-    for (size_t n=0; n<fbLen; n=n+1024) {
-      if (n+1024 < fbLen) {
-        client.write(fbBuf, 1024);
-        fbBuf += 1024;
-      } else if (fbLen%1024>0) {
-        size_t remainder = fbLen%1024;
-        client.write(fbBuf, remainder);
-      }
+// Capture Photo and Save it in Micro SD card
+void
+capturePhotoSaveSD(void)
+{
+    // Take a photo with the camera
+    Serial.println("Taking a photo...");
+    camera_fb_t *fb = esp_camera_fb_get();
+    if (!fb) {
+        Serial.println("Camera capture failed");
+        return;
     }
-    client.print(tail);
 
+    Serial.println("Starting SD Card");
+    if (!SD_MMC.begin("/sdcard", true)) {
+        Serial.println("SD Card Mount Failed");
+        return;
+    }
+
+    uint8_t cardType = SD_MMC.cardType();
+    if (cardType == CARD_NONE) {
+        Serial.println("No SD Card attached");
+        return;
+    }
+
+    fs::FS &fs = SD_MMC;
+
+    // Photo file name
+    File file = fs.open(FILE_PHOTO, FILE_WRITE);
+    if (!file) {
+        Serial.println("Failed to open file in writing mode");
+        return;
+    }
+    file.write(fb->buf, fb->len); // payload (image), payload length
+    Serial.print("The picture has been saved in ");
+    Serial.println(FILE_PHOTO);
+
+    // Close the file
+    file.close();
     esp_camera_fb_return(fb);
+}
 
-    int timeoutTimer = 20000;
-    long startTimer = millis();
-    boolean state = false;
-
-    while ((startTimer + timeoutTimer) > millis()) {
-      Serial.print(".");
-      delay(100);
-      while (client.available()) {
-        char c = client.read();
-        if (c == '\n') {
-          if (getAll.length()==0) { state=true; }
-          getAll = "";
-        } else if (c != '\r')
-          getAll += String(c);
-        if (state==true)
-          getBody += String(c);
-        startTimer = millis();
-      }
-      if (getBody.length()>0)
-        break;
-    }
-    Serial.println();
-    client.stop();
-    Serial.println(getBody);
-  } else {
-    getBody = "Connection to " + serverName +  " failed.";
-    Serial.println(getBody);
-  }
-  return getBody;
+void
+handleFrame(AsyncWebServerRequest *request)
+{
+    capturePhotoSaveSD();
+    request->send(SD_MMC, FILE_PHOTO, "image/jpeg");
 }
