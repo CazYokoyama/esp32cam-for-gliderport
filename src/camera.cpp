@@ -72,7 +72,17 @@ camera_init()
 
   // init with high specs to pre-allocate larger buffers
   if(psramFound()){
-    config.frame_size = FRAMESIZE_SXGA;
+    /*
+      HD is the maximum size
+
+      FRAMESIZE_VGA,      // 640x480 - works
+      FRAMESIZE_SVGA,     // 800x600 - fail in saving in SD card
+      FRAMESIZE_XGA,      // 1024x768 - works
+      FRAMESIZE_HD,       // 1280x720 - Maximum resolution on AI Thinker
+      FRAMESIZE_SXGA,     // 1280x1024 - can't allocate matrix3du
+      FRAMESIZE_UXGA,     // 1600x1200 - can't allocate matrix3du
+     */
+    config.frame_size = FRAMESIZE_HD;
     config.jpeg_quality = 10;  //0-63 lower number means higher quality
     config.fb_count = 2;
   } else {
@@ -116,21 +126,75 @@ camera_init()
   delay(2000);
 }
 
-#include "FS.h"                // SD Card ESP32
-#include "SD_MMC.h"            // SD Card ESP32
-#define FILE_PHOTO "/current.jpg"
+#include "img_converters.h"
+#include <fb_gfx.h>
+#include <fr_forward.h>
 
-// Capture Photo and Save it in Micro SD card
-void
-capturePhotoSaveSD(void)
+static void
+rgb_print(dl_matrix3du_t *image_matrix,
+          uint32_t x, uint32_t y,
+          uint32_t color, const char *str)
 {
-    // Take a photo with the camera
-    Serial.println("Taking a photo...");
+    fb_data_t fb;
+    fb.width = image_matrix->w;
+    fb.height = image_matrix->h;
+    fb.data = image_matrix->item;
+    fb.bytes_per_pixel = 3;
+    fb.format = FB_BGR888;
+    fb_gfx_print(&fb, x, y, color, str);
+}
+
+// capture Photo, overlay caption and timestamp and Save it in Micro SD card
+void
+capturePhotoOverlaySaveSD()
+{
+    /* capture photo */
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
         Serial.println("Camera capture failed");
         return;
     }
+
+    /* convert to rgb888 format */
+    dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
+    if (!image_matrix) {
+        Serial.println("dl_matrix3du_alloc failed");
+        return;
+    }
+    fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
+
+    esp_camera_fb_return(fb);
+
+    /* overlay caption */
+    rgb_print(image_matrix,
+              5, image_matrix->h - 25,
+              0x00ffffff, caption.c_str());
+
+    /* overlay timestamp */
+    struct tm timeinfo;
+    memset(&timeinfo, 0, sizeof(timeinfo));
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("Failed to obtain time");
+        return;
+    }
+    char timeStringBuff[50]; //50 chars should be enough
+    strftime(timeStringBuff, sizeof(timeStringBuff), "%Y/%m/%d %H:%M:%S", &timeinfo);
+    rgb_print(image_matrix,
+              image_matrix->w - strlen(timeStringBuff) * 14 - 5, image_matrix->h - 25,
+              0x00ffffff, timeStringBuff);
+
+    /* convert rgb888 to jpeg */
+    size_t _jpg_buf_len = 0;
+    uint8_t * _jpg_buf = NULL;
+    bool jpeg_converted = fmt2jpg(image_matrix->item, image_matrix->w*image_matrix->h*3,
+                                  image_matrix->w, image_matrix->h,
+                                  PIXFORMAT_RGB888, 90,
+                                  &_jpg_buf, &_jpg_buf_len);
+    if (!jpeg_converted) {
+        Serial.println("Failed to convert to jpeg");
+        return;
+    }
+    dl_matrix3du_free(image_matrix);
 
     Serial.println("Starting SD Card");
     if (!SD_MMC.begin("/sdcard", true)) {
@@ -138,6 +202,7 @@ capturePhotoSaveSD(void)
         return;
     }
 
+    /* save in Micro SD card */
     uint8_t cardType = SD_MMC.cardType();
     if (cardType == CARD_NONE) {
         Serial.println("No SD Card attached");
@@ -152,18 +217,17 @@ capturePhotoSaveSD(void)
         Serial.println("Failed to open file in writing mode");
         return;
     }
-    file.write(fb->buf, fb->len); // payload (image), payload length
+    file.write(_jpg_buf, _jpg_buf_len); // payload (image), payload length
     Serial.print("The picture has been saved in ");
     Serial.println(FILE_PHOTO);
 
     // Close the file
     file.close();
-    esp_camera_fb_return(fb);
 }
 
 void
 handleFrame(AsyncWebServerRequest *request)
 {
-    capturePhotoSaveSD();
+    capturePhotoOverlaySaveSD();
     request->send(SD_MMC, FILE_PHOTO, "image/jpeg");
 }
