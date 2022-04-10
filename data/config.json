@@ -16,9 +16,6 @@
       ]
    },
    "upload":{
-      "serverName":"www.caztech.com",
-      "serverPath":"/glider/wvsc/webcam/mobilewebcam-serverside/NorthPlains/cam.php",
-      "serverPort":80,
       "ntpServer":"pool.ntp.org",
       "gmtOffset_hour":-8,
       "daylightOffset_hour":1,

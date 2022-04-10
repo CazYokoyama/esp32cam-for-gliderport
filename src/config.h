@@ -27,9 +27,6 @@
 
 extern String wifi_ssid[N_APs];
 extern String wifi_pass[N_APs];
-extern String serverName;
-extern String serverPath;
-extern int  serverPort;
 extern String ntpServer;
 extern long gmtOffset_hour;
 extern int  daylightOffset_hour;

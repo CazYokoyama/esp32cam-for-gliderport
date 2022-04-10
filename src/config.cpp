@@ -41,9 +41,6 @@ String wifi_pass[N_APs] = {
          "xxxxxxx",
          "xxxxxxx"
 };
-String serverName = "www.caztech.com";
-String serverPath = "/glider/wvsc/webcam/mobilewebcam-serverside/NorthPlains/cam.php";
-int  serverPort = 80;
 String ntpServer = "pool.ntp.org";
 long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
@@ -125,9 +122,6 @@ bool read_config(void)
         configFile.close();
         return false;
     }
-    serverName         = obj["upload"]["serverName"].as<String>();
-    serverPath         = obj["upload"]["serverPath"].as<String>();
-    serverPort         = obj["upload"]["serverPort"];
     ntpServer          = obj["upload"]["ntpServer"].as<String>();
     gmtOffset_hour      = obj["upload"]["gmtOffset_hour"];
     daylightOffset_hour = obj["upload"]["daylightOffset_hour"];
@@ -188,9 +182,6 @@ bool save_config(void)
         obj["wifi"]["ssid"][i] = wifi_ssid[i];
         obj["wifi"]["pass"][i] = wifi_pass[i];
     }
-    obj["upload"]["serverName"]         = serverName;
-    obj["upload"]["serverPath"]         = serverPath;
-    obj["upload"]["serverPort"]         = serverPort;
     obj["upload"]["ntpServer"]          = ntpServer;
     obj["upload"]["gmtOffset_hour"]      = gmtOffset_hour;
     obj["upload"]["daylightOffset_hour"] = daylightOffset_hour;
