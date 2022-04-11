@@ -146,7 +146,7 @@ rgb_print(dl_matrix3du_t *image_matrix,
 
 // capture Photo, overlay caption and timestamp and Save it in Micro SD card
 void
-capturePhotoOverlaySaveSD()
+handleFrame(AsyncWebServerRequest *request)
 {
     /* capture photo */
     camera_fb_t *fb = esp_camera_fb_get();
@@ -196,38 +196,5 @@ capturePhotoOverlaySaveSD()
     }
     dl_matrix3du_free(image_matrix);
 
-    Serial.println("Starting SD Card");
-    if (!SD_MMC.begin("/sdcard", true)) {
-        Serial.println("SD Card Mount Failed");
-        return;
-    }
-
-    /* save in Micro SD card */
-    uint8_t cardType = SD_MMC.cardType();
-    if (cardType == CARD_NONE) {
-        Serial.println("No SD Card attached");
-        return;
-    }
-
-    fs::FS &fs = SD_MMC;
-
-    // Photo file name
-    File file = fs.open(FILE_PHOTO, FILE_WRITE);
-    if (!file) {
-        Serial.println("Failed to open file in writing mode");
-        return;
-    }
-    file.write(_jpg_buf, _jpg_buf_len); // payload (image), payload length
-    Serial.print("The picture has been saved in ");
-    Serial.println(FILE_PHOTO);
-
-    // Close the file
-    file.close();
-}
-
-void
-handleFrame(AsyncWebServerRequest *request)
-{
-    capturePhotoOverlaySaveSD();
-    request->send(SD_MMC, FILE_PHOTO, "image/jpeg");
+    request->send_P(200, "image/jpeg", (const uint8_t *)_jpg_buf, _jpg_buf_len);
 }
