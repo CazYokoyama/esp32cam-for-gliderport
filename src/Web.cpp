@@ -23,6 +23,7 @@
 #include "config.h"
 #include <Update.h>
 #include "camera.hpp"
+#include "wifi.hpp" /* for ESP32_dB_to_power_level */
 
 #define  U_PART U_FLASH
 
@@ -171,7 +172,7 @@ void Web_setup()
              wifi_ssid[2].c_str(), "hidepass",
              wifi_ssid[3].c_str(), "hidepass",
              wifi_ssid[4].c_str(), "hidepass",
-             ntpServer.c_str(),
+             ntpServer.c_str(), wifiTxPower,
              gmtOffset_hour, daylightOffset_hour,
              caption.c_str(), timerInterval,
              start_upload, end_upload
@@ -242,6 +243,11 @@ void Web_setup()
 	    wifi_pass[n_pass++] = p->value();
 	  if (p->name() == String("ntpServer"))
 	    ntpServer = p->value();
+	  if (p->name() == String("wifiTxPower")) {
+            int x = p->value().toInt();
+            if (0 <= x && x < ARRAY_SIZE(ESP32_dB_to_power_level))
+              wifiTxPower = x;
+	  }
 	  if (p->name() == String("gmtOffset_hour"))
 	    gmtOffset_hour = p->value().toInt();
 	  if (p->name() == String("daylightOffset_hour"))

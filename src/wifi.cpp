@@ -62,6 +62,8 @@ wifi_setup()
       Serial.print("Connect "); Serial.print(WiFi.SSID());
       Serial.print(" at "); Serial.println(WiFi.localIP());
       my_IP = WiFi.localIP();
+      ESP32_WiFi_setOutputPower(wifiTxPower);
+      delay(10);
       return;
     }
     delay(500);
@@ -73,7 +75,7 @@ wifi_setup()
   Serial.println("Hostname: " + host_name);
   Serial.println(F("Wait for WiFi connection."));
   WiFi.mode(WIFI_AP);
-  ESP32_WiFi_setOutputPower(WIFI_TX_POWER_MED); // 10 dB
+  ESP32_WiFi_setOutputPower(WIFI_TX_POWER_MED); // 13 dB
   delay(10);
   Serial.print(F("Setting soft-AP configuration ... "));
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ?

@@ -28,6 +28,7 @@
 extern String wifi_ssid[N_APs];
 extern String wifi_pass[N_APs];
 extern String ntpServer;
+extern int8_t wifiTxPower;
 extern long gmtOffset_hour;
 extern int  daylightOffset_hour;
 extern String caption;

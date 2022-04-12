@@ -24,35 +24,27 @@
 
 extern WiFiClient client;
 
+static const int8_t ESP32_dB_to_power_level[] = {
+    -4, /* -1   dB, #0 */
+    8,  /* 2    dB, #1 */
+    20, /* 5    dB, #2 */
+    28, /* 7    dB, #3 */
+    34, /* 8.5  dB, #4 */
+    44, /* 11   dB, #5 */
+    52, /* 13   dB, #6 */
+    60, /* 15   dB, #7 */
+    68, /* 17   dB, #8 */
+    74, /* 18.5 dB, #9 */
+    76, /* 19   dB, #10 */
+    78  /* 19.5 dB, #11 */
+};
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 enum
 {
     WIFI_TX_POWER_MIN = 0,  /* 0  dBm */
-    WIFI_TX_POWER_MED = 10, /* 10 dBm */
-    WIFI_TX_POWER_MAX = 18  /* 18 dBm */
-};
-
-static const int8_t ESP32_dB_to_power_level[21] = {
-    8,  /* 2    dB, #0 */
-    8,  /* 2    dB, #1 */
-    8,  /* 2    dB, #2 */
-    8,  /* 2    dB, #3 */
-    8,  /* 2    dB, #4 */
-    20, /* 5    dB, #5 */
-    20, /* 5    dB, #6 */
-    28, /* 7    dB, #7 */
-    28, /* 7    dB, #8 */
-    34, /* 8.5  dB, #9 */
-    34, /* 8.5  dB, #10 */
-    44, /* 11   dB, #11 */
-    44, /* 11   dB, #12 */
-    52, /* 13   dB, #13 */
-    52, /* 13   dB, #14 */
-    60, /* 15   dB, #15 */
-    60, /* 15   dB, #16 */
-    68, /* 17   dB, #17 */
-    74, /* 18.5 dB, #18 */
-    76, /* 19   dB, #19 */
-    78  /* 19.5 dB, #20 */
+    WIFI_TX_POWER_MED = ARRAY_SIZE(ESP32_dB_to_power_level) / 2,
+    WIFI_TX_POWER_MAX = ARRAY_SIZE(ESP32_dB_to_power_level) - 1
 };
 
 void wifi_setup();

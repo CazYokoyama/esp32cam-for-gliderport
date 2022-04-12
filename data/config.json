@@ -17,6 +17,7 @@
    },
    "upload":{
       "ntpServer":"pool.ntp.org",
+      "wifiTxPower":0,
       "gmtOffset_hour":-8,
       "daylightOffset_hour":1,
       "caption":"North Plains Glider port",

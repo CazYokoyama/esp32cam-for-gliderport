@@ -42,6 +42,7 @@ String wifi_pass[N_APs] = {
          "xxxxxxx"
 };
 String ntpServer = "pool.ntp.org";
+int8_t wifiTxPower = 0;      /* minimum */
 long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
 String caption = "North Plains Glider port";
@@ -123,6 +124,7 @@ bool read_config(void)
         return false;
     }
     ntpServer          = obj["upload"]["ntpServer"].as<String>();
+    wifiTxPower        = obj["upload"]["wifiTxPower"];
     gmtOffset_hour      = obj["upload"]["gmtOffset_hour"];
     daylightOffset_hour = obj["upload"]["daylightOffset_hour"];
     caption            = obj["upload"]["caption"].as<String>();
@@ -183,6 +185,7 @@ bool save_config(void)
         obj["wifi"]["pass"][i] = wifi_pass[i];
     }
     obj["upload"]["ntpServer"]          = ntpServer;
+    obj["upload"]["wifiTxPower"]        = wifiTxPower;
     obj["upload"]["gmtOffset_hour"]      = gmtOffset_hour;
     obj["upload"]["daylightOffset_hour"] = daylightOffset_hour;
     obj["upload"]["caption"]            = caption;
