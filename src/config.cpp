@@ -43,6 +43,7 @@ String wifi_pass[N_APs] = {
 };
 String ntpServer = "pool.ntp.org";
 int8_t wifiTxPower = 0;      /* minimum */
+uc_t dark_threshold = 25;
 long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
 String caption = "North Plains Glider port";

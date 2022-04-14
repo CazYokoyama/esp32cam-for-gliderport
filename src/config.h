@@ -19,9 +19,10 @@
 
 #include <string.h>
 
-
 #ifndef CONFIGHELPER_H
 #define CONFIGHELPER_H
+
+#include "dl_lib_matrix3d.h"
 
 #define N_APs 5
 
@@ -29,6 +30,7 @@ extern String wifi_ssid[N_APs];
 extern String wifi_pass[N_APs];
 extern String ntpServer;
 extern int8_t wifiTxPower;
+extern uc_t dark_threshold;
 extern long gmtOffset_hour;
 extern int  daylightOffset_hour;
 extern String caption;

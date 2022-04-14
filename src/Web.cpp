@@ -307,4 +307,15 @@ void Web_setup()
 
 void Web_loop(void)
 {
+    /* find day or night every CHECK_DAY_OR_NIGHT minutes */
+    dl_matrix3du_t *image_matrix = acquire_rgb888();
+    uc_t brightness = get_average_brightness(image_matrix);
+    release_rgb888(image_matrix);
+    if (brightness <= dark_threshold) {
+        Serial.printf("Going to deep sleep due to brightness=%u\n",
+                      brightness);
+        Serial.flush();
+        esp_deep_sleep_start();
+    }
+    delay(timerInterval * 1000);
 }

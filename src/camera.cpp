@@ -162,30 +162,44 @@ get_average_brightness(dl_matrix3du_t *image_matrix)
   return (w / image_matrix->h);
 }
 
-/*
-  capture Photo, overlay caption and timestamp
-*/
-void
-capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
+dl_matrix3du_t *
+acquire_rgb888()
 {
     /* capture photo */
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {
         Serial.println("Camera capture failed");
-        return;
+        return NULL;
     }
 
     /* convert to rgb888 format */
     dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
     if (!image_matrix) {
         Serial.println("dl_matrix3du_alloc failed");
-        return;
+        return NULL;
     }
     fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
 
     esp_camera_fb_return(fb);
 
-    Serial.printf("%u\n", get_average_brightness(image_matrix));
+    return image_matrix;
+}
+
+void
+release_rgb888(dl_matrix3du_t *image_matrix)
+{
+    dl_matrix3du_free(image_matrix);
+}
+
+/*
+  capture Photo, overlay caption and timestamp
+*/
+void
+capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
+{
+    dl_matrix3du_t *image_matrix = acquire_rgb888();
+    uc_t brightness = get_average_brightness(image_matrix);
+    Serial.printf("%u\n", brightness);
 
     /* overlay caption */
     rgb_print(image_matrix,
@@ -214,5 +228,5 @@ capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
         Serial.println("Failed to convert to jpeg");
         return;
     }
-    dl_matrix3du_free(image_matrix);
+    release_rgb888(image_matrix);
 }

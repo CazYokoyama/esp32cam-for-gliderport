@@ -24,7 +24,6 @@
 
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
 
-struct tm timeinfo;
 static bool webui;
 
 void setup() {
@@ -33,9 +32,11 @@ void setup() {
 
   Serial.println("Wake up from deep sleep");
 
-  read_config();
-
   esp_sleep_enable_timer_wakeup(timerInterval * uS_TO_S_FACTOR);
+
+  camera_init();
+
+  read_config();
 
   wifi_setup();
 
@@ -43,28 +44,12 @@ void setup() {
   configTime(gmtOffset_hour * 3600,
              daylightOffset_hour * 3600,
              ntpServer.c_str());
-  memset(&timeinfo, 0, sizeof(timeinfo));
-  getLocalTime(&timeinfo);
 
-  camera_init();
-
-#if 0
-  if (start_upload <= timeinfo.tm_hour * 100 + timeinfo.tm_min  &&
-    timeinfo.tm_hour * 100 + timeinfo.tm_min < end_upload) {
-    wifi_close();
-    Serial.println("Going to deep sleep");
-    Serial.flush();
-    esp_deep_sleep_start();
-  } else {
-#endif
-    Serial.print("Web server ");
-    Serial.print(my_IP);
-    Serial.println(" is up");
-    Serial.flush();
-    Web_setup();
-#if 0
-  }
-#endif
+  Serial.print("Web server ");
+  Serial.print(my_IP);
+  Serial.println(" is up");
+  Serial.flush();
+  Web_setup();
 }
 
 void loop() {
