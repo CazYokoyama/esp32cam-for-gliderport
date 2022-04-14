@@ -162,9 +162,11 @@ get_average_brightness(dl_matrix3du_t *image_matrix)
   return (w / image_matrix->h);
 }
 
-// capture Photo, overlay caption and timestamp and Save it in Micro SD card
+/*
+  capture Photo, overlay caption and timestamp
+*/
 void
-handleFrame(AsyncWebServerRequest *request)
+capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
 {
     /* capture photo */
     camera_fb_t *fb = esp_camera_fb_get();
@@ -204,21 +206,27 @@ handleFrame(AsyncWebServerRequest *request)
               0x00ffffff, timeStringBuff);
 
     /* convert rgb888 to jpeg */
-    size_t _jpg_buf_len = 0;
-    uint8_t * _jpg_buf = NULL;
     bool jpeg_converted = fmt2jpg(image_matrix->item, image_matrix->w*image_matrix->h*3,
                                   image_matrix->w, image_matrix->h,
                                   PIXFORMAT_RGB888, 90,
-                                  &_jpg_buf, &_jpg_buf_len);
+                                  _jpg_buf, _jpg_buf_len);
     if (!jpeg_converted) {
         Serial.println("Failed to convert to jpeg");
         return;
     }
     dl_matrix3du_free(image_matrix);
+}
+
+void
+handleFrame(AsyncWebServerRequest *request)
+{
+    uint8_t *_jpg_buf = NULL;
+    size_t _jpg_buf_len = 0;
+
+    capturePhoto(&_jpg_buf, &_jpg_buf_len);
     if (_jpg_buf_len == 65536)
         Serial.printf("%s() %d: %d\n", __func__, __LINE__,
                       _jpg_buf_len);
-
     AsyncWebServerResponse *response = request->beginChunkedResponse(
         "image/jpeg",
         [_jpg_buf_len, _jpg_buf]
