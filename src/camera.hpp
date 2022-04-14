@@ -24,6 +24,6 @@
 
 void camera_init();
 uc_t get_average_brightness(dl_matrix3du_t *image_matrix);
-void handleFrame(AsyncWebServerRequest *request);
+void capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len);
 
 #endif /* CAMERA_HPP */
