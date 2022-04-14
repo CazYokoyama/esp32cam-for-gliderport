@@ -144,6 +144,24 @@ rgb_print(dl_matrix3du_t *image_matrix,
     fb_gfx_print(&fb, x, y, color, str);
 }
 
+uc_t
+get_average_brightness(dl_matrix3du_t *image_matrix)
+{
+  int x, y;
+  unsigned long w, h;
+  uc_t *p = image_matrix->item;
+
+  w = 0;
+  for (y = 0; y < image_matrix->h; y++) {
+    h = 0;
+    for (x = 0; x < image_matrix->w; x++) {
+      h += *p++;
+    }
+    w += h / image_matrix->w;
+  }
+  return (w / image_matrix->h);
+}
+
 // capture Photo, overlay caption and timestamp and Save it in Micro SD card
 void
 handleFrame(AsyncWebServerRequest *request)
@@ -164,6 +182,8 @@ handleFrame(AsyncWebServerRequest *request)
     fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
 
     esp_camera_fb_return(fb);
+
+    Serial.printf("%u\n", get_average_brightness(image_matrix));
 
     /* overlay caption */
     rgb_print(image_matrix,
