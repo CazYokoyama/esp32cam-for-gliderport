@@ -116,26 +116,19 @@ void handleDoUpdate(AsyncWebServerRequest* request, const String& filename, size
 void
 handleFrame(AsyncWebServerRequest *request)
 {
-    uint8_t *_jpg_buf = NULL;
-    size_t _jpg_buf_len = 0;
+    camera_fb_t *fb = capturePhoto();
 
-    capturePhoto(&_jpg_buf, &_jpg_buf_len);
-    if (_jpg_buf_len == 65536)
-        Serial.printf("%s() %d: %d\n", __func__, __LINE__,
-                      _jpg_buf_len);
     AsyncWebServerResponse *response = request->beginChunkedResponse(
         "image/jpeg",
-        [_jpg_buf_len, _jpg_buf]
+        [fb]
         (uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
-        //Write up to "maxLen" bytes into "buffer" and return the amount written.
-        //index equals the amount of bytes that have been already sent
-        //You will be asked for more data until 0 is returned
-        //Keep in mind that you can not delay or yield waiting for more data!
-        size_t leftToWrite = _jpg_buf_len - index;
-        if (leftToWrite <= 0)
+        size_t leftToWrite = fb->len - index;
+        if (leftToWrite <= 0) {
+            releasePhoto(fb);
             return 0;  //end of transfer
+        }
         size_t willWrite = (leftToWrite > maxLen) ? maxLen : leftToWrite;
-        memcpy(buffer, _jpg_buf+index, willWrite);
+        memcpy(buffer, fb->buf+index, willWrite);
         return willWrite;
     });
     request->send(response);
@@ -307,16 +300,5 @@ void Web_setup()
 
 void Web_loop(void)
 {
-    /* find day or night every CHECK_DAY_OR_NIGHT minutes */
-    dl_matrix3du_t *image_matrix = acquire_rgb888();
-    uc_t brightness = get_average_brightness(image_matrix);
-    release_rgb888(image_matrix);
-    if (brightness <= dark_threshold) {
-        wifi_close();
-        Serial.printf("Going to deep sleep due to brightness=%u\n",
-                      brightness);
-        Serial.flush();
-        esp_deep_sleep_start();
-    }
     delay(timerInterval * 1000);
 }

@@ -20,12 +20,13 @@
 #define CAMERA_HPP
 
 #include "ESPAsyncWebServer.h"
-#include "dl_lib_matrix3d.h"
+#include "esp_camera.h"
 
 esp_err_t camera_init();
 dl_matrix3du_t *acquire_rgb888();
 void release_rgb888(dl_matrix3du_t *image_matrix);
 uc_t get_average_brightness(dl_matrix3du_t *image_matrix);
-void capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len);
+camera_fb_t *capturePhoto();
+void releasePhoto(camera_fb_t *fb);
 
 #endif /* CAMERA_HPP */

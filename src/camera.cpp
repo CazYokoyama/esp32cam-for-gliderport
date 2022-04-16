@@ -125,110 +125,17 @@ camera_init()
   return err;
 }
 
-#include "img_converters.h"
-#include <fb_gfx.h>
-#include <fr_forward.h>
-
-static void
-rgb_print(dl_matrix3du_t *image_matrix,
-          uint32_t x, uint32_t y,
-          uint32_t color, const char *str)
-{
-    fb_data_t fb;
-    fb.width = image_matrix->w;
-    fb.height = image_matrix->h;
-    fb.data = image_matrix->item;
-    fb.bytes_per_pixel = 3;
-    fb.format = FB_BGR888;
-    fb_gfx_print(&fb, x, y, color, str);
-}
-
-uc_t
-get_average_brightness(dl_matrix3du_t *image_matrix)
-{
-  int x, y;
-  unsigned long w, h;
-  uc_t *p = image_matrix->item;
-
-  w = 0;
-  for (y = 0; y < image_matrix->h; y++) {
-    h = 0;
-    for (x = 0; x < image_matrix->w; x++) {
-      h += *p++;
-    }
-    w += h / image_matrix->w;
-  }
-  return (w / image_matrix->h);
-}
-
-dl_matrix3du_t *
-acquire_rgb888()
-{
-    /* capture photo */
-    camera_fb_t *fb = esp_camera_fb_get();
-    if (!fb) {
-        Serial.println("Camera capture failed");
-        return NULL;
-    }
-
-    /* convert to rgb888 format */
-    dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
-    if (!image_matrix) {
-        Serial.println("dl_matrix3du_alloc failed");
-        return NULL;
-    }
-    fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
-
-    esp_camera_fb_return(fb);
-
-    return image_matrix;
-}
-
-void
-release_rgb888(dl_matrix3du_t *image_matrix)
-{
-    dl_matrix3du_free(image_matrix);
-}
-
 /*
   capture Photo, overlay caption and timestamp
 */
-void
-capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
+camera_fb_t *
+capturePhoto()
 {
-    dl_matrix3du_t *image_matrix = acquire_rgb888();
-    uc_t brightness = get_average_brightness(image_matrix);
-    Serial.printf("%u ", brightness);
-
-    /* overlay caption */
-    rgb_print(image_matrix,
-              5, 2,
-              0x00ffffff, caption.c_str());
-
-    /* overlay timestamp */
-    // init and get the time
-    configTime(gmtOffset_hour * 3600,
-               daylightOffset_hour * 3600,
-               ntpServer.c_str());
-    struct tm timeinfo;
-    memset(&timeinfo, 0, sizeof(timeinfo));
-    if (getLocalTime(&timeinfo)) {
-        char timeStringBuff[50]; //50 chars should be enough
-        strftime(timeStringBuff, sizeof(timeStringBuff), "%Y/%m/%d %H:%M:%S", &timeinfo);
-        rgb_print(image_matrix,
-                  image_matrix->w - strlen(timeStringBuff) * 14 - 5, 2,
-                  0x00ffffff, timeStringBuff);
-    } else
-        Serial.println("Failed to obtain time");
-
-    /* convert rgb888 to jpeg */
-    bool jpeg_converted = fmt2jpg(image_matrix->item, image_matrix->w*image_matrix->h*3,
-                                  image_matrix->w, image_matrix->h,
-                                  PIXFORMAT_RGB888, 90,
-                                  _jpg_buf, _jpg_buf_len);
-    if (!jpeg_converted) {
-        Serial.println("Failed to convert to jpeg");
-        return;
-    }
-    release_rgb888(image_matrix);
+    /* capture photo */
+    return esp_camera_fb_get();
+}
+void
+releasePhoto(camera_fb_t *fb)
+{
+    esp_camera_fb_return(fb);
 }
