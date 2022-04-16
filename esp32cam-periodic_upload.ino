@@ -41,19 +41,17 @@ void setup() {
     ESP.restart();
   }
 
-  read_config();
+  if (read_config()) {
+      wifi_setup();
 
-  wifi_setup();
-
-  //init and get the time
-  configTime(gmtOffset_hour * 3600,
-             daylightOffset_hour * 3600,
-             ntpServer.c_str());
-
-  Serial.print("Web server ");
-  Serial.print(my_IP);
-  Serial.println(" is up");
-  Serial.flush();
+      //init and get the time
+      configTime(gmtOffset_hour * 3600,
+                 daylightOffset_hour * 3600,
+                 ntpServer.c_str());
+  } else {
+      /* can't read config.json */
+      wifi_ap_setup();
+  }
   Web_setup();
 }
 

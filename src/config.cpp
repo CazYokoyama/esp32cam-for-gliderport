@@ -110,8 +110,6 @@ bool read_config(void)
             String ssid = obj["wifi"]["ssid"][i].as<String>();
             String pass = obj["wifi"]["pass"][i].as<String>();
             if (ssid != String("xxxxxxx")) {
-                Serial.printf("%s() wifi[%d]: %s/%s\n", __func__, i,
-                              ssid.c_str(), pass.c_str());
                 if (pass != String("hidepass")) {
                     wifi_ssid[i] = ssid;
                     wifi_pass[i] = pass;

@@ -32,7 +32,6 @@ IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 String station_ssid PROGMEM = "ognbase";
 const char* ap_default_psk PROGMEM = "987654321"; ///< Default PSK.
-IPAddress my_IP;
 
 static void
 ESP32_WiFi_setOutputPower(int dB)
@@ -44,6 +43,21 @@ ESP32_WiFi_setOutputPower(int dB)
         dB = 0;
 
     esp_wifi_set_max_tx_power(ESP32_dB_to_power_level[dB]);
+}
+void
+wifi_ap_setup()
+{
+    WiFi.setHostname(host_name.c_str());
+    WiFi.mode(WIFI_AP);
+    ESP32_WiFi_setOutputPower(WIFI_TX_POWER_MED); // 13 dB
+    delay(10);
+    if (!WiFi.softAPConfig(local_IP, gateway, subnet)) {
+        Serial.println(F("can't configure soft-AP"));
+        return;
+    }
+    Serial.print(host_name);
+    Serial.print(F(" is waiting for connection at "));
+    Serial.println(WiFi.softAPIP());
 }
 
 void
@@ -59,34 +73,17 @@ wifi_setup()
   }
   for (int n = 0; n < 20; n++) { /* retry */
     if (wifiMulti->run() == WL_CONNECTED) {
-      Serial.print("Connect "); Serial.print(WiFi.SSID());
-      Serial.print(" at "); Serial.println(WiFi.localIP());
-      my_IP = WiFi.localIP();
       ESP32_WiFi_setOutputPower(wifiTxPower);
       delay(10);
+      Serial.print("Web server "); Serial.print(WiFi.localIP());
+      Serial.print(" is up through "); Serial.println(WiFi.SSID());
       return;
     }
     delay(500);
   }
 
-  Serial.println("All APs does not work");
-  WiFi.setHostname(host_name.c_str());
-  // Print hostname.
-  Serial.println("Hostname: " + host_name);
-  Serial.println(F("Wait for WiFi connection."));
-  WiFi.mode(WIFI_AP);
-  ESP32_WiFi_setOutputPower(WIFI_TX_POWER_MED); // 13 dB
-  delay(10);
-  Serial.print(F("Setting soft-AP configuration ... "));
-  Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ?
-		 F("Ready") : F("Failed!"));
-  Serial.print(F("Setting soft-AP ... "));
-  Serial.println(WiFi.softAP(host_name.c_str(), ap_default_psk) ?
-		 F("Ready") : F("Failed!"));
-  Serial.print(F("IP address: "));
-  Serial.println(WiFi.softAPIP());
-  Serial.flush();
-  my_IP = WiFi.softAPIP();
+  /* Serial.println("All APs does not work"); */
+  wifi_ap_setup();
 }
 
 void

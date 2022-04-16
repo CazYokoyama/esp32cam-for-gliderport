@@ -47,6 +47,7 @@ enum
     WIFI_TX_POWER_MAX = ARRAY_SIZE(ESP32_dB_to_power_level) - 1
 };
 
+void wifi_ap_setup();
 void wifi_setup();
 void wifi_close();
 
