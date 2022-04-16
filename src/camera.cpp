@@ -208,15 +208,14 @@ capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
     /* overlay timestamp */
     struct tm timeinfo;
     memset(&timeinfo, 0, sizeof(timeinfo));
-    if (!getLocalTime(&timeinfo)) {
+    if (getLocalTime(&timeinfo)) {
+        char timeStringBuff[50]; //50 chars should be enough
+        strftime(timeStringBuff, sizeof(timeStringBuff), "%Y/%m/%d %H:%M:%S", &timeinfo);
+        rgb_print(image_matrix,
+                  image_matrix->w - strlen(timeStringBuff) * 14 - 5, image_matrix->h - 25,
+                  0x00ffffff, timeStringBuff);
+    } else
         Serial.println("Failed to obtain time");
-        return;
-    }
-    char timeStringBuff[50]; //50 chars should be enough
-    strftime(timeStringBuff, sizeof(timeStringBuff), "%Y/%m/%d %H:%M:%S", &timeinfo);
-    rgb_print(image_matrix,
-              image_matrix->w - strlen(timeStringBuff) * 14 - 5, image_matrix->h - 25,
-              0x00ffffff, timeStringBuff);
 
     /* convert rgb888 to jpeg */
     bool jpeg_converted = fmt2jpg(image_matrix->item, image_matrix->w*image_matrix->h*3,
