@@ -30,7 +30,7 @@ void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); 
   Serial.begin(115200);
 
-  Serial.println("Wake up from deep sleep");
+  Serial.println("Start or wake up from deep sleep");
 
   esp_sleep_enable_timer_wakeup(timerInterval * uS_TO_S_FACTOR);
 

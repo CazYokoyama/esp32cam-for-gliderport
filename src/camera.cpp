@@ -198,7 +198,7 @@ capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
 {
     dl_matrix3du_t *image_matrix = acquire_rgb888();
     uc_t brightness = get_average_brightness(image_matrix);
-    Serial.printf("%u\n", brightness);
+    Serial.printf("%u ", brightness);
 
     /* overlay caption */
     rgb_print(image_matrix,
