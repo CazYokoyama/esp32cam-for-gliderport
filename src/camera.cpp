@@ -202,7 +202,7 @@ capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
 
     /* overlay caption */
     rgb_print(image_matrix,
-              5, image_matrix->h - 25,
+              5, 2,
               0x00ffffff, caption.c_str());
 
     /* overlay timestamp */
@@ -216,7 +216,7 @@ capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
         char timeStringBuff[50]; //50 chars should be enough
         strftime(timeStringBuff, sizeof(timeStringBuff), "%Y/%m/%d %H:%M:%S", &timeinfo);
         rgb_print(image_matrix,
-                  image_matrix->w - strlen(timeStringBuff) * 14 - 5, image_matrix->h - 25,
+                  image_matrix->w - strlen(timeStringBuff) * 14 - 5, 2,
                   0x00ffffff, timeStringBuff);
     } else
         Serial.println("Failed to obtain time");
