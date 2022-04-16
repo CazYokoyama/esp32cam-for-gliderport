@@ -34,7 +34,12 @@ void setup() {
 
   esp_sleep_enable_timer_wakeup(timerInterval * uS_TO_S_FACTOR);
 
-  camera_init();
+  esp_err_t err = camera_init();
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    delay(1000);
+    ESP.restart();
+  }
 
   read_config();
 

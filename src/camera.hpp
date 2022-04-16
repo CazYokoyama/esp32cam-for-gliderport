@@ -22,7 +22,7 @@
 #include "ESPAsyncWebServer.h"
 #include "dl_lib_matrix3d.h"
 
-void camera_init();
+esp_err_t camera_init();
 dl_matrix3du_t *acquire_rgb888();
 void release_rgb888(dl_matrix3du_t *image_matrix);
 uc_t get_average_brightness(dl_matrix3du_t *image_matrix);

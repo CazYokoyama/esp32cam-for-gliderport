@@ -44,7 +44,7 @@
 
 extern struct tm timeinfo;
 
-void
+esp_err_t
 camera_init()
 {
   camera_config_t config;
@@ -93,11 +93,8 @@ camera_init()
 
   // camera init
   esp_err_t err = esp_camera_init(&config);
-  if (err != ESP_OK) {
-    Serial.printf("Camera init failed with error 0x%x", err);
-    delay(1000);
-    ESP.restart();
-  }
+  if (err != ESP_OK)
+    return err;
 
   sensor_t * s = esp_camera_sensor_get();
   s->set_brightness(s, 0);     // -2 to 2
@@ -124,6 +121,8 @@ camera_init()
   s->set_colorbar(s, 0);       // 0 = disable , 1 = enable
 
   delay(2000);
+
+  return err;
 }
 
 #include "img_converters.h"
