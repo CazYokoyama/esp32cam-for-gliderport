@@ -82,7 +82,7 @@ camera_init()
       FRAMESIZE_SXGA,     // 1280x1024 - can't allocate matrix3du
       FRAMESIZE_UXGA,     // 1600x1200 - can't allocate matrix3du
      */
-    config.frame_size = FRAMESIZE_HD;
+    config.frame_size = FRAMESIZE_SXGA;
     config.jpeg_quality = 10;  //0-63 lower number means higher quality
     config.fb_count = 2;
   } else {
