@@ -312,6 +312,7 @@ void Web_loop(void)
     uc_t brightness = get_average_brightness(image_matrix);
     release_rgb888(image_matrix);
     if (brightness <= dark_threshold) {
+        wifi_close();
         Serial.printf("Going to deep sleep due to brightness=%u\n",
                       brightness);
         Serial.flush();
