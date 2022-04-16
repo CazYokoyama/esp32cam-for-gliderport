@@ -206,6 +206,10 @@ capturePhoto(uint8_t **_jpg_buf, size_t *_jpg_buf_len)
               0x00ffffff, caption.c_str());
 
     /* overlay timestamp */
+    // init and get the time
+    configTime(gmtOffset_hour * 3600,
+               daylightOffset_hour * 3600,
+               ntpServer.c_str());
     struct tm timeinfo;
     memset(&timeinfo, 0, sizeof(timeinfo));
     if (getLocalTime(&timeinfo)) {

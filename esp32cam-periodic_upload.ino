@@ -41,21 +41,15 @@ void setup() {
     ESP.restart();
   }
 
-  if (read_config()) {
+  if (read_config())
       wifi_setup();
-
-      //init and get the time
-      configTime(gmtOffset_hour * 3600,
-                 daylightOffset_hour * 3600,
-                 ntpServer.c_str());
-  } else {
-      /* can't read config.json */
+  else {
+      /* set up AP because we don't know SSID/password or can't connect. */
       wifi_ap_setup();
   }
   Web_setup();
 }
 
 void loop() {
-    /* never come here on deep sleep */
     Web_loop();
 }
