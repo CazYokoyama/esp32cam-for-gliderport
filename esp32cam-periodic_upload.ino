@@ -52,11 +52,11 @@ void setup() {
           wifi_close();
           ulong deep_sleep_min;
           if (end_upload > start_upload) {
-              deep_sleep_min = 24 * 60 - ((end_upload / 100) * 60 + (end_upload % 100));
-              deep_sleep_min += (start_upload / 100) * 60 + (start_upload % 100);
+              deep_sleep_min = 24 * 60 - ((end_upload / 100) * 60);
+              deep_sleep_min += (start_upload / 100) * 60;
           } else { /* end_upload < start_upload */
-              deep_sleep_min = (start_upload / 100) * 60 + (start_upload % 100) -
-                              ((end_upload / 100) * 60 + (end_upload % 100));
+              deep_sleep_min = (start_upload / 100) * 60 -
+                              ((end_upload / 100) * 60);
           }
           Serial.printf("Go to deep sleep until %02d:%02d\n",
                          start_upload / 100, start_upload % 100);
