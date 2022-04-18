@@ -60,7 +60,7 @@ wifi_ap_setup()
     Serial.println(WiFi.softAPIP());
 }
 
-void
+WiFiMulti *
 wifi_setup()
 {
   wifiMulti = new WiFiMulti();
@@ -77,13 +77,12 @@ wifi_setup()
       delay(10);
       Serial.print("Web server "); Serial.print(WiFi.localIP());
       Serial.print(" is up through "); Serial.println(WiFi.SSID());
-      return;
+      return wifiMulti;
     }
     delay(500);
   }
-
   /* Serial.println("All APs does not work"); */
-  wifi_ap_setup();
+  return wifiMulti;
 }
 
 void

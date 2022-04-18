@@ -39,9 +39,7 @@ void setup() {
     ESP.restart();
   }
 
-  if (read_config()) {
-      wifi_setup();
-
+  if (read_config() && wifi_setup()) {
       //init and get the time
       configTime(gmtOffset_hour * 3600,
                  daylightOffset_hour * 3600,

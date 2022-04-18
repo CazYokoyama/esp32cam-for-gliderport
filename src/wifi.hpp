@@ -48,7 +48,7 @@ enum
 };
 
 void wifi_ap_setup();
-void wifi_setup();
+WiFiMulti *wifi_setup();
 void wifi_close();
 
 #endif /* WIFI_HPP */
