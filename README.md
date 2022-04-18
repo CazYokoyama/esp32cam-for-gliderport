@@ -1,2 +1,2 @@
-# esp32cam-periodic_upload
-upload camera image every XX sec/min
+# esp32cam-for-gliderport
+Camera at glider port.
