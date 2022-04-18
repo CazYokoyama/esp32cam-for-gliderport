@@ -105,6 +105,7 @@ void handleDoUpdate(AsyncWebServerRequest* request, const String& filename, size
             Update.printError(Serial);
         else
         {
+            wifi_close();
             delay(1000);
             ESP.restart();
         }
@@ -211,6 +212,7 @@ void Web_setup()
     });
 
     wserver.on("/reset_all", HTTP_GET, [](AsyncWebServerRequest* request){
+        wifi_close();
         request->redirect("/config");
         SPIFFS.format();
         delay(200);
@@ -218,7 +220,9 @@ void Web_setup()
     });
 
     wserver.on("/reboot", HTTP_GET, [](AsyncWebServerRequest* request){
+        wifi_close();
         request->redirect("/config");
+        delay(200);
         ESP.restart();
     });
 
@@ -262,6 +266,7 @@ void Web_setup()
         request->redirect("/config");
 
         save_config();
+        wifi_close();
         delay(200);
         ESP.restart();
     });
