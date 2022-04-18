@@ -71,7 +71,7 @@ wifi_setup()
       wifiMulti->addAP(wifi_ssid[i].c_str(), wifi_pass[i].c_str());
     }
   }
-  for (int n = 0; n < 20; n++) { /* retry */
+  for (int n = 0; n < 10; n++) { /* retry */
     if (wifiMulti->run() == WL_CONNECTED) {
       ESP32_WiFi_setOutputPower(wifiTxPower);
       delay(10);
