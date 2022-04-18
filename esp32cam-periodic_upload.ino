@@ -22,7 +22,7 @@
 #include "src/wifi.hpp"
 #include "src/camera.hpp"
 
-#define uS_TO_M_FACTOR (60 * 1000000)  /* Conversion factor for micro seconds to minutes */
+#define uS_TO_H_FACTOR (60 * 60 * 1000000)  /* Conversion factor for micro seconds to hours */
 
 static bool webui;
 
@@ -50,17 +50,17 @@ void setup() {
       if (timeinfo.tm_hour * 100 + timeinfo.tm_min <= start_upload ||
           end_upload < timeinfo.tm_hour * 100 + timeinfo.tm_min) {
           wifi_close();
-          ulong deep_sleep_min;
-          if (end_upload > start_upload) {
-              deep_sleep_min = 24 * 60 - ((end_upload / 100) * 60);
-              deep_sleep_min += (start_upload / 100) * 60;
-          } else { /* end_upload < start_upload */
-              deep_sleep_min = (start_upload / 100) * 60 -
-                              ((end_upload / 100) * 60);
+          ulong deep_sleep_hour;
+          if (timeinfo.tm_hour < start_upload / 100) {
+              deep_sleep_hour = (start_upload / 100) - timeinfo.tm_hour;
+          } else {
+              deep_sleep_hour = (timeinfo.tm_hour < 24) ?
+                                 24 - timeinfo.tm_hour : 0;
+              deep_sleep_hour += start_upload / 100;
           }
-          Serial.printf("Go to deep sleep until %02d:%02d\n",
-                         start_upload / 100, start_upload % 100);
-          esp_sleep_enable_timer_wakeup(deep_sleep_min * uS_TO_M_FACTOR);
+          Serial.printf("%02d:%02d: deep sleep until %02d.\n",
+                         timeinfo.tm_hour, timeinfo.tm_min, start_upload / 100);
+          esp_sleep_enable_timer_wakeup(deep_sleep_hour * uS_TO_H_FACTOR);
           esp_deep_sleep_start();
       }
   } else {
