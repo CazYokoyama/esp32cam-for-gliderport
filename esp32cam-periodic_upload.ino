@@ -22,7 +22,7 @@
 #include "src/wifi.hpp"
 #include "src/camera.hpp"
 
-#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
+#define uS_TO_M_FACTOR (60 * 1000000)  /* Conversion factor for micro seconds to minutes */
 
 static bool webui;
 
@@ -32,8 +32,6 @@ void setup() {
 
   Serial.println("Start or wake up from deep sleep");
 
-  esp_sleep_enable_timer_wakeup(timerInterval * uS_TO_S_FACTOR);
-
   esp_err_t err = camera_init();
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x", err);
@@ -41,9 +39,33 @@ void setup() {
     ESP.restart();
   }
 
-  if (read_config())
+  if (read_config()) {
       wifi_setup();
-  else {
+
+      //init and get the time
+      configTime(gmtOffset_hour * 3600,
+                 daylightOffset_hour * 3600,
+                 ntpServer.c_str());
+      struct tm timeinfo;
+      memset(&timeinfo, 0, sizeof(timeinfo));
+      getLocalTime(&timeinfo);
+      if (timeinfo.tm_hour * 100 + timeinfo.tm_min <= start_upload ||
+          end_upload < timeinfo.tm_hour * 100 + timeinfo.tm_min) {
+          wifi_close();
+          ulong deep_sleep_min;
+          if (end_upload > start_upload) {
+              deep_sleep_min = 24 * 60 - ((end_upload / 100) * 60 + (end_upload % 100));
+              deep_sleep_min += (start_upload / 100) * 60 + (start_upload % 100);
+          } else { /* end_upload < start_upload */
+              deep_sleep_min = (start_upload / 100) * 60 + (start_upload % 100) -
+                              ((end_upload / 100) * 60 + (end_upload % 100));
+          }
+          Serial.printf("Go to deep sleep until %02d:%02d\n",
+                         start_upload / 100, start_upload % 100);
+          esp_sleep_enable_timer_wakeup(deep_sleep_min * uS_TO_M_FACTOR);
+          esp_deep_sleep_start();
+      }
+  } else {
       /* set up AP because we don't know SSID/password or can't connect. */
       wifi_ap_setup();
   }
