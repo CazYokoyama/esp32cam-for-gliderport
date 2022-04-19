@@ -47,21 +47,24 @@ void setup() {
       struct tm timeinfo;
       memset(&timeinfo, 0, sizeof(timeinfo));
       getLocalTime(&timeinfo);
-      if (timeinfo.tm_hour * 100 + timeinfo.tm_min <= start_upload ||
-          end_upload < timeinfo.tm_hour * 100 + timeinfo.tm_min) {
+      if (timeinfo.tm_hour < start_upload ||
+          end_upload <= timeinfo.tm_hour) {
           wifi_close();
           ulong deep_sleep_hour;
-          if (timeinfo.tm_hour < start_upload / 100) {
-              deep_sleep_hour = (start_upload / 100) - timeinfo.tm_hour;
+          if (timeinfo.tm_hour < start_upload) {
+              deep_sleep_hour = (start_upload) - timeinfo.tm_hour;
           } else {
               deep_sleep_hour = (timeinfo.tm_hour < 24) ?
                                  24 - timeinfo.tm_hour : 0;
-              deep_sleep_hour += start_upload / 100;
+              deep_sleep_hour += start_upload;
           }
-          Serial.printf("%02d:%02d: deep sleep until %02d.\n",
-                         timeinfo.tm_hour, timeinfo.tm_min, start_upload / 100);
+          Serial.printf("Deep sleep: %02d is out of %02d-%02d o'clock.\n",
+                        timeinfo.tm_hour, start_upload, end_upload);
           esp_sleep_enable_timer_wakeup(deep_sleep_hour * uS_TO_H_FACTOR);
           esp_deep_sleep_start();
+      } else {
+          Serial.printf("Active: %02d is in %02d-%02d o'clock.\n",
+                        timeinfo.tm_hour, start_upload, end_upload);
       }
   } else {
       /* set up AP because we don't know SSID/password or can't connect. */

@@ -48,8 +48,8 @@ long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
 String caption = "North Plains Glider port";
 int  timerInterval = 60;       /* 1min * 60 = 60 sec */
-int  start_upload = 0500; /* start hour of taking image */
-int  end_upload = 2200;   /* start hour of taking image */
+int  start_upload = 05; /* active since in o'clock */
+int  end_upload = 22;   /* sleep since in o'clock */
 
 bool read_config(void)
 {

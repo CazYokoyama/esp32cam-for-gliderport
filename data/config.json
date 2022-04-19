@@ -22,7 +22,7 @@
       "daylightOffset_hour":1,
       "caption":"North Plains Glider port",
       "timerInterval":300,
-      "start_upload":"0600",
-      "end_upload":"2100"
+      "start_upload":"06",
+      "end_upload":"21"
    }
 }
