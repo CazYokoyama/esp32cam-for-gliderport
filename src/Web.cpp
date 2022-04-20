@@ -138,6 +138,8 @@ handleFrame(AsyncWebServerRequest *request)
 void Web_start()
 {
     wserver.begin();
+    Serial.print("Web server "); Serial.print(myIP.toString());
+    Serial.print(" is up through "); Serial.println(ssid_hostname);
 }
 
 void Web_stop()

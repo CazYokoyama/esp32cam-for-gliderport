@@ -23,6 +23,8 @@
 #include <esp_wifi.h>
 
 extern WiFiMulti *wifiMulti;
+extern String ssid_hostname;
+extern IPAddress myIP;
 
 static const int8_t ESP32_dB_to_power_level[] = {
     -4, /* -1   dB, #0 */

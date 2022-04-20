@@ -20,6 +20,8 @@
 #include "config.h"
 
 WiFiMulti *wifiMulti = NULL;
+String ssid_hostname = "";
+IPAddress myIP(0, 0, 0, 0);
 
 /**
  * Default WiFi connection information.
@@ -57,6 +59,8 @@ wifi_ap_setup()
     Serial.print(host_name);
     Serial.print(F(" is waiting for connection at "));
     Serial.println(WiFi.softAPIP());
+    ssid_hostname = host_name;
+    myIP = WiFi.softAPIP();
 }
 
 WiFiMulti *
@@ -74,8 +78,8 @@ wifi_setup()
     if (wifiMulti->run() == WL_CONNECTED) {
       ESP32_WiFi_setOutputPower(wifiTxPower);
       delay(10);
-      Serial.print("Web server "); Serial.print(WiFi.localIP());
-      Serial.print(" is up through "); Serial.println(WiFi.SSID());
+      ssid_hostname = WiFi.SSID();
+      myIP = WiFi.localIP();
       return wifiMulti;
     }
     delay(500);
