@@ -46,7 +46,7 @@ int8_t wifiTxPower = 0;      /* minimum */
 uc_t dark_threshold = 25;
 long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
-String caption = "North Plains Glider port";
+int  web_port = 61000;
 int  timerInterval = 60;       /* 1min * 60 = 60 sec */
 int  start_upload = 05; /* active since in o'clock */
 int  end_upload = 22;   /* sleep since in o'clock */
@@ -126,7 +126,7 @@ bool read_config(void)
     wifiTxPower        = obj["upload"]["wifiTxPower"];
     gmtOffset_hour      = obj["upload"]["gmtOffset_hour"];
     daylightOffset_hour = obj["upload"]["daylightOffset_hour"];
-    caption            = obj["upload"]["caption"].as<String>();
+    web_port           = obj["upload"]["web_port"];
     timerInterval      = obj["upload"]["timerInterval"];
     start_upload       = obj["upload"]["start_upload"];
     end_upload         = obj["upload"]["end_upload"];
@@ -187,7 +187,7 @@ bool save_config(void)
     obj["upload"]["wifiTxPower"]        = wifiTxPower;
     obj["upload"]["gmtOffset_hour"]      = gmtOffset_hour;
     obj["upload"]["daylightOffset_hour"] = daylightOffset_hour;
-    obj["upload"]["caption"]            = caption;
+    obj["upload"]["web_port"]           = web_port;
     obj["upload"]["timerInterval"]      = timerInterval;
     obj["upload"]["start_upload"]       = start_upload;
     obj["upload"]["end_upload"]         = end_upload;

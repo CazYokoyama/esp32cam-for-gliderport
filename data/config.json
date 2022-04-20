@@ -20,7 +20,7 @@
       "wifiTxPower":0,
       "gmtOffset_hour":-8,
       "daylightOffset_hour":1,
-      "caption":"North Plains Glider port",
+      "web_port":61000,
       "timerInterval":300,
       "start_upload":"06",
       "end_upload":"21"

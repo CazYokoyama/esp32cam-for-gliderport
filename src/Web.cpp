@@ -30,7 +30,7 @@
 const String version = "0.01-" + String(GIT_VERSION);
 
 // Create AsyncWebServer object on port 80
-AsyncWebServer wserver(61000);
+AsyncWebServer wserver(web_port);
 
 static const char upload_html[] PROGMEM = "<html>\
                                             <head>\
@@ -198,7 +198,7 @@ void Web_setup()
              wifi_ssid[4].c_str(), "hidepass",
              ntpServer.c_str(), wifiTxPower,
              gmtOffset_hour, daylightOffset_hour,
-             caption.c_str(), timerInterval,
+             web_port, timerInterval,
              start_upload, end_upload
              );
 
@@ -278,8 +278,8 @@ void Web_setup()
 	    gmtOffset_hour = p->value().toInt();
 	  if (p->name() == String("daylightOffset_hour"))
 	    daylightOffset_hour = p->value().toInt();
-	  if (p->name() == String("caption"))
-	    caption = p->value();
+	  if (p->name() == String("web_port"))
+	    web_port = p->value().toInt();
 	  if (p->name() == String("timerInterval"))
 	    timerInterval = p->value().toInt();
 	  if (p->name() == String("start_upload"))
