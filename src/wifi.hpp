@@ -22,7 +22,7 @@
 #include <WiFiMulti.h>
 #include <esp_wifi.h>
 
-extern WiFiClient client;
+extern WiFiMulti *wifiMulti;
 
 static const int8_t ESP32_dB_to_power_level[] = {
     -4, /* -1   dB, #0 */

@@ -19,8 +19,7 @@
 #include "wifi.hpp"
 #include "config.h"
 
-WiFiClient client;
-WiFiMulti *wifiMulti;
+WiFiMulti *wifiMulti = NULL;
 
 /**
  * Default WiFi connection information.
@@ -82,6 +81,7 @@ wifi_setup()
     delay(500);
   }
   /* Serial.println("All APs does not work"); */
+  delete wifiMulti; wifiMulti = NULL;
   return wifiMulti;
 }
 
@@ -89,5 +89,8 @@ void
 wifi_close()
 {
     esp_wifi_stop();
-    delete wifiMulti;
+    if (wifiMulti == NULL)
+        WiFi.softAPdisconnect(true);
+    else
+        delete wifiMulti; wifiMulti = NULL;
 }
