@@ -46,7 +46,11 @@ void setup() {
                  ntpServer.c_str());
       struct tm timeinfo;
       memset(&timeinfo, 0, sizeof(timeinfo));
-      getLocalTime(&timeinfo);
+      if (!getLocalTime(&timeinfo)) {
+          Serial.println("can't obtain local time");
+          delay(1000);
+          ESP.restart();
+      }
       if (timeinfo.tm_hour < start_upload ||
           end_upload <= timeinfo.tm_hour) {
           wifi_close();
