@@ -48,6 +48,7 @@ void setup() {
       memset(&timeinfo, 0, sizeof(timeinfo));
       if (!getLocalTime(&timeinfo)) {
           Serial.println("can't obtain local time");
+          wifi_close();
           delay(1000);
           ESP.restart();
       }

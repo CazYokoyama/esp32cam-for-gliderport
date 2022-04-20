@@ -63,6 +63,7 @@ void handleUpload(AsyncWebServerRequest* request, String filename, size_t index,
         request->_tempFile.close();
         request->redirect("/config");
         if (filename == "config.json") {
+            wifi_close();
             delay(200);
             ESP.restart();
 	}
@@ -236,6 +237,7 @@ void Web_setup()
         wifi_close();
         request->redirect("/config");
         SPIFFS.format();
+        wifi_close();
         delay(200);
         ESP.restart();
     });
@@ -243,6 +245,7 @@ void Web_setup()
     wserver.on("/reboot", HTTP_GET, [](AsyncWebServerRequest* request){
         wifi_close();
         request->redirect("/config");
+        wifi_close();
         delay(200);
         ESP.restart();
     });
