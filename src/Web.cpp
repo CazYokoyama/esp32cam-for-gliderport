@@ -257,16 +257,20 @@ void Web_setup()
 
     // Send a GET request to <ESP_IP>/get?inputString=<inputMessage>
     wserver.on("/get", HTTP_GET, [](AsyncWebServerRequest* request) {
-	int n_ssid = 0, n_pass = 0;
 	int params = request->params();
 	for(int i = 0; i < params; i++) {
 	  AsyncWebParameter *p = request->getParam(i);
-	  if (p->name() == String("wifi_ssid") &&
-	      p->value() != String("xxxxxxx"))
-	    wifi_ssid[n_ssid++] = p->value();
-	  if (p->name() == String("wifi_password") &&
-	      p->value() != String("hidepass"))
-	    wifi_pass[n_pass++] = p->value();
+          char *ssid_pat = "wifi_ssid";
+          if (strncmp(p->name().c_str(), ssid_pat, strlen(ssid_pat)) == 0) {
+              int index = p->name().c_str()[strlen(ssid_pat)] - '0';
+              wifi_ssid[index] = p->value();
+          }
+          char *pass_pat = "wifi_password";
+          if (strncmp(p->name().c_str(), pass_pat, strlen(pass_pat)) == 0 &&
+              p->value() != String("hidepass")) {
+              int index = p->name().c_str()[strlen(pass_pat)] - '0';
+              wifi_pass[index] = p->value();
+          }
 	  if (p->name() == String("ntpServer"))
 	    ntpServer = p->value();
 	  if (p->name() == String("wifiTxPower")) {
