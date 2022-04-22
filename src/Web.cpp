@@ -309,5 +309,4 @@ void Web_setup()
 
 void Web_loop(void)
 {
-    delay(timerInterval * 1000);
 }

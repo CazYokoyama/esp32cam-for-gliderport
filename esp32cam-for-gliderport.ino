@@ -32,6 +32,8 @@ void setup() {
 
   Serial.println("Start or wake up from deep sleep");
 
+  esp_sleep_enable_timer_wakeup(timerInterval * 1000000);
+
   esp_err_t err = camera_init();
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x", err);
@@ -39,7 +41,17 @@ void setup() {
     ESP.restart();
   }
 
-  if (read_config() && wifi_setup()) {
+  if (read_config()) {
+      if (!wifi_setup())
+          /* set up AP because we don't know SSID/password or can't connect. */
+          wifi_ap_setup();
+  }
+  Web_setup();
+}
+
+void loop()
+{
+    if (wifiMulti != NULL) { /* STA mode */
       //init and get the time
       configTime(gmtOffset_hour * 3600,
                  daylightOffset_hour * 3600,
@@ -55,29 +67,14 @@ void setup() {
       if (timeinfo.tm_hour < start_upload ||
           end_upload <= timeinfo.tm_hour) {
           wifi_close();
-          ulong deep_sleep_hour;
-          if (timeinfo.tm_hour < start_upload) {
-              deep_sleep_hour = (start_upload) - timeinfo.tm_hour;
-          } else {
-              deep_sleep_hour = (timeinfo.tm_hour < 24) ?
-                                 24 - timeinfo.tm_hour : 0;
-              deep_sleep_hour += start_upload;
-          }
           Serial.printf("Deep sleep: %02d is out of %02d-%02d o'clock.\n",
                         timeinfo.tm_hour, start_upload, end_upload);
-          esp_sleep_enable_timer_wakeup(deep_sleep_hour * uS_TO_H_FACTOR);
           esp_deep_sleep_start();
       } else {
           Serial.printf("Active: %02d is in %02d-%02d o'clock.\n",
                         timeinfo.tm_hour, start_upload, end_upload);
       }
-  } else {
-      /* set up AP because we don't know SSID/password or can't connect. */
-      wifi_ap_setup();
-  }
-  Web_setup();
-}
-
-void loop() {
+    }
     Web_loop();
+    delay(timerInterval * 1000); /* delay timerInterval sec */
 }
