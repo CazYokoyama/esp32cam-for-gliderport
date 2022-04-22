@@ -70,9 +70,6 @@ void loop()
           Serial.printf("Deep sleep: %02d is out of %02d-%02d o'clock.\n",
                         timeinfo.tm_hour, start_upload, end_upload);
           esp_deep_sleep_start();
-      } else {
-          Serial.printf("Active: %02d is in %02d-%02d o'clock.\n",
-                        timeinfo.tm_hour, start_upload, end_upload);
       }
     }
     Web_loop();
