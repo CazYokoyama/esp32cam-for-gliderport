@@ -198,7 +198,7 @@ void Web_setup()
              wifi_ssid[4].c_str(), "hidepass",
              ntpServer.c_str(), wifiTxPower,
              gmtOffset_hour, daylightOffset_hour,
-             web_port, timerInterval,
+             web_port, checkInterval,
              start_upload, end_upload
              );
 
@@ -284,8 +284,8 @@ void Web_setup()
 	    daylightOffset_hour = p->value().toInt();
 	  if (p->name() == String("web_port"))
 	    web_port = p->value().toInt();
-	  if (p->name() == String("timerInterval"))
-	    timerInterval = p->value().toInt();
+	  if (p->name() == String("checkInterval"))
+	    checkInterval = p->value().toInt();
 	  if (p->name() == String("start_upload"))
 	    start_upload = p->value().toInt();
 	  if (p->name() == String("end_upload"))

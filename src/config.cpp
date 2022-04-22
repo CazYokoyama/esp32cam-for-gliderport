@@ -47,7 +47,7 @@ uc_t dark_threshold = 25;
 long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
 int  web_port = 61000;
-int  timerInterval = 60;       /* 1min * 60 = 60 sec */
+int  checkInterval = 60;       /* 1min * 60 = 60 sec */
 int  start_upload = 05; /* active since in o'clock */
 int  end_upload = 22;   /* sleep since in o'clock */
 
@@ -127,7 +127,7 @@ bool read_config(void)
     gmtOffset_hour      = obj["upload"]["gmtOffset_hour"];
     daylightOffset_hour = obj["upload"]["daylightOffset_hour"];
     web_port           = obj["upload"]["web_port"];
-    timerInterval      = obj["upload"]["timerInterval"];
+    checkInterval      = obj["upload"]["checkInterval"];
     start_upload       = obj["upload"]["start_upload"];
     end_upload         = obj["upload"]["end_upload"];
 
@@ -188,7 +188,7 @@ bool save_config(void)
     obj["upload"]["gmtOffset_hour"]      = gmtOffset_hour;
     obj["upload"]["daylightOffset_hour"] = daylightOffset_hour;
     obj["upload"]["web_port"]           = web_port;
-    obj["upload"]["timerInterval"]      = timerInterval;
+    obj["upload"]["checkInterval"]      = checkInterval;
     obj["upload"]["start_upload"]       = start_upload;
     obj["upload"]["end_upload"]         = end_upload;
 

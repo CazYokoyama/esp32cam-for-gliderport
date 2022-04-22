@@ -22,7 +22,7 @@
 #include "src/wifi.hpp"
 #include "src/camera.hpp"
 
-#define uS_TO_H_FACTOR (60 * 60 * 1000000)  /* Conversion factor for micro seconds to hours */
+#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
 
 static bool webui;
 
@@ -32,7 +32,7 @@ void setup() {
 
   Serial.println("Start or wake up from deep sleep");
 
-  esp_sleep_enable_timer_wakeup(timerInterval * 1000000);
+  esp_sleep_enable_timer_wakeup(checkInterval * uS_TO_S_FACTOR);
 
   esp_err_t err = camera_init();
   if (err != ESP_OK) {
@@ -76,5 +76,5 @@ void loop()
       }
     }
     Web_loop();
-    delay(timerInterval * 1000); /* delay timerInterval sec */
+    delay(checkInterval * uS_TO_S_FACTOR); /* delay checkInterval sec */
 }

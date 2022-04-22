@@ -34,7 +34,7 @@ extern uc_t dark_threshold;
 extern long gmtOffset_hour;
 extern int  daylightOffset_hour;
 extern int  web_port;
-extern int  timerInterval;
+extern int  checkInterval;
 extern int  start_upload;
 extern int  end_upload;
 
