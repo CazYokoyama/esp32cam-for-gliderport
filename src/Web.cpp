@@ -263,13 +263,21 @@ void Web_setup()
           char *ssid_pat = "wifi_ssid";
           if (strncmp(p->name().c_str(), ssid_pat, strlen(ssid_pat)) == 0) {
               int index = p->name().c_str()[strlen(ssid_pat)] - '0';
-              wifi_ssid[index] = p->value();
+              if (p->value().length() != 0)
+                  wifi_ssid[index] = p->value();
+              else {
+                  wifi_ssid[index] = UNDEF_STR;
+                  wifi_pass[index] = UNDEF_STR;
+              }
           }
           char *pass_pat = "wifi_password";
           if (strncmp(p->name().c_str(), pass_pat, strlen(pass_pat)) == 0 &&
               p->value() != String("hidepass")) {
               int index = p->name().c_str()[strlen(pass_pat)] - '0';
-              wifi_pass[index] = p->value();
+              if (p->value().length() != 0)
+                  wifi_pass[index] = p->value();
+              else
+                  wifi_pass[index] = UNDEF_STR;
           }
 	  if (p->name() == String("ntpServer"))
 	    ntpServer = p->value();

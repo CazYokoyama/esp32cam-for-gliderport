@@ -25,6 +25,7 @@
 #include "dl_lib_matrix3d.h"
 
 #define N_APs 5
+#define UNDEF_STR "xxxxxxx"
 
 extern String wifi_ssid[N_APs];
 extern String wifi_pass[N_APs];

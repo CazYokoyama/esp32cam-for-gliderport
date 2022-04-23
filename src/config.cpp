@@ -28,18 +28,18 @@
 
 //wifi
 String wifi_ssid[N_APs] = {
-         "xxxxxxx",
-         "xxxxxxx",
-         "xxxxxxx",
-         "xxxxxxx",
-         "xxxxxxx"
+         UNDEF_STR,
+         UNDEF_STR,
+         UNDEF_STR,
+         UNDEF_STR,
+         UNDEF_STR
 };
 String wifi_pass[N_APs] = {
-         "xxxxxxx",
-         "xxxxxxx",
-         "xxxxxxx",
-         "xxxxxxx",
-         "xxxxxxx"
+         UNDEF_STR,
+         UNDEF_STR,
+         UNDEF_STR,
+         UNDEF_STR,
+         UNDEF_STR
 };
 String ntpServer = "pool.ntp.org";
 int8_t wifiTxPower = 0;      /* minimum */
@@ -109,7 +109,7 @@ bool read_config(void)
         for (int i = 0; i < N_APs; i++) {
             String ssid = obj["wifi"]["ssid"][i].as<String>();
             String pass = obj["wifi"]["pass"][i].as<String>();
-            if (ssid != String("xxxxxxx")) {
+            if (ssid != String(UNDEF_STR)) {
                 if (pass != String("hidepass")) {
                     wifi_ssid[i] = ssid;
                     wifi_pass[i] = pass;
@@ -177,7 +177,7 @@ bool save_config(void)
     }
 
     for (int i = 0; i < N_APs; i++) {
-        if (strcmp(wifi_ssid[i].c_str(), "xxxxxxx") != 0)
+        if (strcmp(wifi_ssid[i].c_str(), UNDEF_STR) != 0)
             Serial.printf("%s() wifi[%d]: %s/%s\n", __func__, i,
                           wifi_ssid[i].c_str(), wifi_pass[i].c_str());
         obj["wifi"]["ssid"][i] = wifi_ssid[i];
