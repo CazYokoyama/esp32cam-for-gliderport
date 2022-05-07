@@ -22,6 +22,7 @@
 #include <WiFiMulti.h>
 #include <esp_wifi.h>
 
+extern WiFiClient client;
 extern WiFiMulti *wifiMulti;
 extern String ssid_hostname;
 extern IPAddress myIP;

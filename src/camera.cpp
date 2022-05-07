@@ -139,3 +139,107 @@ releasePhoto(camera_fb_t *fb)
 {
     esp_camera_fb_return(fb);
 }
+
+String sendPhoto() {
+  String getAll;
+  String getBody;
+
+  camera_fb_t *fb = capturePhoto();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    delay(1000);
+    ESP.restart();
+  }
+
+  Serial.printf("send a photo on %02d:%02d to %s:%s\n",
+                timeinfo.tm_hour, timeinfo.tm_min,
+                serverName.c_str(), serverPath.c_str());
+
+  if (client.connect(serverName.c_str(), serverPort)) {
+    Serial.println("Connection successful!");
+
+    /* create time stamp string */
+    char date_time[40];
+    snprintf(date_time, sizeof(date_time), "%d-%02d-%02d %02d:%02d:%02d",
+      (timeinfo.tm_year)+1900,(timeinfo.tm_mon)+1, timeinfo.tm_mday,
+      timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+
+    String caption_head = "--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07\r\nContent-Disposition: form-data; name=\"caption\"\r\n\r\n";
+    String caption_data = caption;
+    String caption_tail = "\r\n--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07";
+
+    String timestamp_head = "--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07\r\nContent-Disposition: form-data; name=\"timestamp\"\r\n\r\n";
+    String timestamp_data = String(date_time);
+    String timestamp_tail = "\r\n--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07";
+
+    String head = "--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07\r\nContent-Disposition: form-data; name=\"userfile\"; filename=\"esp32-cam.jpg\"\r\n\r\n";
+    String tail = "\r\n--ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07--\r\n\r\n";
+
+    uint32_t imageLen = fb->len;
+    uint32_t extraLen = caption_head.length() + caption_data.length() + caption_tail.length() +
+	timestamp_head.length() + timestamp_data.length() + timestamp_tail.length() +
+	head.length() + tail.length();
+    uint32_t totalLen = imageLen + extraLen;
+
+    client.println("POST " + serverPath + " HTTP/1.1");
+    client.println("Host: " + serverName);
+    client.println("Content-Length: " + String(totalLen));
+    client.println("Content-Type: multipart/form-data; boundary=ffZk5M3ar7Fodn/1mnJmdX5h+XQbLU07");
+ 
+    client.println();
+    client.print(caption_head);
+    client.print(caption_data);
+    client.print(caption_tail);
+
+    client.println();
+    client.print(timestamp_head);
+    client.print(timestamp_data);
+    client.print(timestamp_tail);
+
+    client.println();
+    client.print(head);
+
+    uint8_t *fbBuf = fb->buf;
+    size_t fbLen = fb->len;
+    for (size_t n=0; n<fbLen; n=n+1024) {
+      if (n+1024 < fbLen) {
+        client.write(fbBuf, 1024);
+        fbBuf += 1024;
+      } else if (fbLen%1024>0) {
+        size_t remainder = fbLen%1024;
+        client.write(fbBuf, remainder);
+      }
+    }
+    client.print(tail);
+    releasePhoto(fb);
+
+    int timeoutTimer = 20000;
+    long startTimer = millis();
+    boolean state = false;
+
+    while ((startTimer + timeoutTimer) > millis()) {
+      Serial.print(".");
+      delay(100);
+      while (client.available()) {
+        char c = client.read();
+        if (c == '\n') {
+          if (getAll.length()==0) { state=true; }
+          getAll = "";
+        } else if (c != '\r')
+          getAll += String(c);
+        if (state==true)
+          getBody += String(c);
+        startTimer = millis();
+      }
+      if (getBody.length()>0)
+        break;
+    }
+    Serial.println();
+    client.stop();
+    Serial.println(getBody);
+  } else {
+    getBody = "Connection to " + serverName +  " failed.";
+    Serial.println(getBody);
+  }
+  return getBody;
+}

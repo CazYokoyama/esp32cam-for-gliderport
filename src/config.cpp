@@ -47,9 +47,13 @@ uc_t dark_threshold = 25;
 long gmtOffset_hour = -8;    /* PDT: -8 */
 int  daylightOffset_hour = 1; /* 1 hour */
 int  web_port = 61000;
-int  checkInterval = 60;       /* 1min * 60 = 60 sec */
+int  checkInterval = 300;       /* 1min * 60 = 60 sec */
 int  start_upload = 05; /* active since in o'clock */
 int  end_upload = 22;   /* sleep since in o'clock */
+String serverName = "www.caztech.com";
+String serverPath = "/glider/wvsc/webcam/mobilewebcam-serverside/NorthPlains/cam.php";
+int  serverPort = 80;
+String caption = "North Plains Glider port";
 
 bool read_config(void)
 {
@@ -130,6 +134,10 @@ bool read_config(void)
     checkInterval      = obj["upload"]["checkInterval"];
     start_upload       = obj["upload"]["start_upload"];
     end_upload         = obj["upload"]["end_upload"];
+    serverName         = obj["upload"]["serverName"].as<String>();
+    serverPath         = obj["upload"]["serverPath"].as<String>();
+    serverPort         = obj["upload"]["serverPort"];
+    caption            = obj["upload"]["caption"].as<String>();
 
     return true;
 }
@@ -191,6 +199,10 @@ bool save_config(void)
     obj["upload"]["checkInterval"]      = checkInterval;
     obj["upload"]["start_upload"]       = start_upload;
     obj["upload"]["end_upload"]         = end_upload;
+    obj["upload"]["serverName"]         = serverName;
+    obj["upload"]["serverPath"]         = serverPath;
+    obj["upload"]["serverPort"]         = serverPort;
+    obj["upload"]["caption"]            = caption;
 
     if (serializeJson(obj, configFile) == 0)
         Serial.println(F("Failed to write to file"));

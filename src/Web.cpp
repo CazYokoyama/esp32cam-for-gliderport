@@ -199,7 +199,9 @@ void Web_setup()
              ntpServer.c_str(), wifiTxPower,
              gmtOffset_hour, daylightOffset_hour,
              web_port, checkInterval,
-             start_upload, end_upload
+             start_upload, end_upload,
+             serverName.c_str(), serverPort,
+             serverPath.c_str(), caption.c_str()
              );
 
     size_t len  = strlen(offset);
@@ -298,6 +300,14 @@ void Web_setup()
 	    start_upload = p->value().toInt();
 	  if (p->name() == String("end_upload"))
 	    end_upload = p->value().toInt();
+	  if (p->name() == String("serverName"))
+	    serverName = p->value();
+	  if (p->name() == String("serverPort"))
+	    serverPort = p->value().toInt();
+	  if (p->name() == String("serverPath"))
+	    serverPath = p->value();
+	  if (p->name() == String("caption"))
+	    caption = p->value();
 	}
 
         request->redirect("/config");

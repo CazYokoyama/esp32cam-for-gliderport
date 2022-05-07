@@ -23,7 +23,9 @@
 #include "src/camera.hpp"
 
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
+#define mS_TO_S_FACTOR 1000     /* Conversion factor for mili seconds to seconds */
 
+struct tm timeinfo;
 static bool webui;
 
 void setup() {
@@ -59,7 +61,6 @@ void loop()
       configTime(gmtOffset_hour * 3600,
                  daylightOffset_hour * 3600,
                  ntpServer.c_str());
-      struct tm timeinfo;
       memset(&timeinfo, 0, sizeof(timeinfo));
       if (!getLocalTime(&timeinfo)) {
           Serial.println("can't obtain local time");
@@ -74,7 +75,9 @@ void loop()
                         timeinfo.tm_hour, start_upload, end_upload);
           esp_deep_sleep_start();
       }
+
+      sendPhoto();
     }
     Web_loop();
-    delay(checkInterval * uS_TO_S_FACTOR); /* delay checkInterval sec */
+    delay(checkInterval * mS_TO_S_FACTOR); /* delay checkInterval sec */
 }

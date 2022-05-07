@@ -38,6 +38,10 @@ extern int  web_port;
 extern int  checkInterval;
 extern int  start_upload;
 extern int  end_upload;
+extern String serverName;
+extern String serverPath;
+extern int  serverPort;
+extern String caption;
 
 bool save_config(void);
 

@@ -28,5 +28,6 @@ void release_rgb888(dl_matrix3du_t *image_matrix);
 uc_t get_average_brightness(dl_matrix3du_t *image_matrix);
 camera_fb_t *capturePhoto();
 void releasePhoto(camera_fb_t *fb);
+String sendPhoto();
 
 #endif /* CAMERA_HPP */

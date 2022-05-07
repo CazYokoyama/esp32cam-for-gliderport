@@ -19,6 +19,7 @@
 #include "wifi.hpp"
 #include "config.h"
 
+WiFiClient client;
 WiFiMulti *wifiMulti = NULL;
 String ssid_hostname = "";
 IPAddress myIP(0, 0, 0, 0);
