@@ -41,10 +41,13 @@ void setup() {
     ESP.restart();
   }
 
-  if (read_config()) {
-      if (!wifi_setup())
-          /* set up AP because we don't know SSID/password or can't connect. */
-          wifi_ap_setup();
+  if (!read_config())
+      goto _ap_;
+
+  if (!wifi_setup()) {
+_ap_:
+      /* set up AP because we don't know SSID/password or can't connect. */
+      wifi_ap_setup();
   }
   Web_setup();
 }
