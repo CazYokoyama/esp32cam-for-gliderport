@@ -22,7 +22,6 @@
 #include "src/wifi.hpp"
 #include "src/camera.hpp"
 
-#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
 #define mS_TO_S_FACTOR 1000     /* Conversion factor for mili seconds to seconds */
 
 struct tm timeinfo;
@@ -33,8 +32,6 @@ void setup() {
   Serial.begin(115200);
 
   Serial.println("Start or wake up from deep sleep");
-
-  esp_sleep_enable_timer_wakeup(checkInterval * uS_TO_S_FACTOR);
 
   esp_err_t err = camera_init();
   if (err != ESP_OK) {
@@ -67,13 +64,6 @@ void loop()
           wifi_close();
           delay(1000);
           ESP.restart();
-      }
-      if (timeinfo.tm_hour < start_upload ||
-          end_upload <= timeinfo.tm_hour) {
-          wifi_close();
-          Serial.printf("Deep sleep: %02d is out of %02d-%02d o'clock.\n",
-                        timeinfo.tm_hour, start_upload, end_upload);
-          esp_deep_sleep_start();
       }
 
       sendPhoto();
